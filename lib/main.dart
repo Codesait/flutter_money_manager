@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_manager/navigation_provider.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+import 'my_app.dart';
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of application.
+void main() => runApp(AppBase());
+
+class AppBase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Money Manager',
-      home: MyHome(),
-    );
-  }
-}
-
-class MyHome extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text('Money Manager')),
+      theme: ThemeData.dark(),
+      home: ChangeNotifierProvider<NavigationProvider>(
+        builder: (_) => NavigationProvider(),
+        child: MyApp(),
+      ),
     );
   }
 }
