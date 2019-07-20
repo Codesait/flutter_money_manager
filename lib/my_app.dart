@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_money_manager/navigation_provider.dart';
+import 'package:flutter_money_manager/navigatoins/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
@@ -54,9 +54,9 @@ class MyApp extends StatelessWidget {
       body: Consumer<NavigationProvider>(
         builder: (context, navigationProvider, _) => navigationProvider.getNav,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add),
+      floatingActionButton: Consumer<NavigationProvider>(
+        builder: (context, navigationProvider, _) =>
+            navigationProvider.getFab(context),
       ),
     );
   }
