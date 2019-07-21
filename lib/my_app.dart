@@ -8,7 +8,10 @@ class MyApp extends StatelessWidget {
     final nav = Provider.of<NavigationProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Money Manager'),
+        title: Consumer<NavigationProvider>(
+          builder: (context, navigationProvider, _) =>
+              navigationProvider.getAppBarTitle(),
+        ),
         centerTitle: true,
       ),
       drawer: Drawer(

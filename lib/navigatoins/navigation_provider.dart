@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_money_manager/fabs/fabs.dart';
 import 'package:flutter_money_manager/navigatoins/categories.dart';
 import 'package:flutter_money_manager/navigatoins/home.dart';
 import 'package:flutter_money_manager/navigatoins/report.dart';
 import 'package:flutter_money_manager/navigatoins/settings.dart';
-import 'package:flutter_money_manager/fabs/fabs.dart';
 
 class NavigationProvider with ChangeNotifier {
   NavigationItem currentNav = NavigationItem.HOME;
@@ -20,6 +19,19 @@ class NavigationProvider with ChangeNotifier {
         return Settings();
       default:
         return Home();
+    }
+  }
+
+  Widget getAppBarTitle() {
+    switch (currentNav) {
+      case NavigationItem.REPORT:
+        return Text('Report');
+      case NavigationItem.CATEGORIES:
+        return Text('Categories');
+      case NavigationItem.SETTINGS:
+        return Text('Settings');
+      default:
+        return Text('Home');
     }
   }
 
