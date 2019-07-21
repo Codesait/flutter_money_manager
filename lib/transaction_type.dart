@@ -7,7 +7,7 @@ class TransactionType {
   static const INCOME = const TransactionType._internal(1, 'Income');
   static const EXPENSE = const TransactionType._internal(2, 'Expense');
 
-  get value => _value;
+  int get value => _value;
 
-  get name => _name;
+  String get name => _name;
 }
