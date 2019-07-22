@@ -10,7 +10,11 @@ class AppBase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: ThemeData
+            .dark()
+            .primaryColor,
+      ),
       home: ChangeNotifierProvider<NavigationProvider>(
         builder: (_) => NavigationProvider(),
         child: MyApp(),

@@ -41,6 +41,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
+      elevation: 0.0,
       leading: IconButton(
         icon: Icon(Icons.close),
         onPressed: () {
@@ -78,7 +79,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
             SizedBox(height: 16.0),
             TextField(
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: 'Category Name',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -120,6 +121,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
         body: body,
       ),
       data: Theme.of(context).copyWith(
+        canvasColor: Theme
+            .of(context)
+            .primaryColor,
         accentColor: _color,
         cursorColor: _color,
         toggleableActiveColor: _color,

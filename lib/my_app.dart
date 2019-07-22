@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
     final nav = Provider.of<NavigationProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.0,
         title: Consumer<NavigationProvider>(
           builder: (context, navigationProvider, _) =>
               navigationProvider.getAppBarTitle(),

@@ -5,6 +5,7 @@ class TransactionRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.0,
         title: Text('Transaction'),
       ),
       body: Center(
