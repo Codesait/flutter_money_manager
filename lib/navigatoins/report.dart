@@ -10,8 +10,21 @@ class Report extends StatelessWidget {
       itemBuilder: (context, index) {
         if (items[index] is HeadingItem) {
           HeadingItem item = items[index];
-          return ListTile(
-            title: Text(item.heading),
+          return Column(
+            children: <Widget>[
+              index == 0 ? SizedBox(height: 4.0) : Divider(),
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  top: 8.0,
+                  right: 16.0,
+                  bottom: 8.0,
+                ),
+                child: Text(item.heading),
+              ),
+              Divider(),
+            ],
           );
         } else {
           TransactionItem item = items[index];
