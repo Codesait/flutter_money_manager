@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/category.dart';
 
 import '../transaction_type.dart';
+import 'color_circle.dart';
 
 class Categories extends StatelessWidget {
   Widget _buildCategoryWidgets(List<Category> categories) {
@@ -9,9 +10,11 @@ class Categories extends StatelessWidget {
       itemBuilder: (context, index) {
         return ListTile(
           onTap: () {},
+          leading: ColorCircle(color: categories[index].color),
           title: Text(
             categories[index].name,
-            style: TextStyle(color: categories[index].color),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
           trailing: Text(categories[index].transactionType.name),
         );
@@ -40,7 +43,8 @@ class Categories extends StatelessWidget {
       ),
       Category(
         color: Colors.orange,
-        name: 'Phone Bill',
+        name:
+        'Phone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone Bill',
         transactionType: TransactionType.EXPENSE,
       ),
       Category(

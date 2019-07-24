@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/fabs/fabs.dart';
-import 'package:flutter_money_manager/navigatoins/category_list_route.dart';
-import 'package:flutter_money_manager/navigatoins/home.dart';
-import 'package:flutter_money_manager/navigatoins/report.dart';
-import 'package:flutter_money_manager/navigatoins/settings.dart';
+import 'package:flutter_money_manager/widgets/category_list.dart';
+import 'package:flutter_money_manager/widgets/home.dart';
+import 'package:flutter_money_manager/widgets/report.dart';
+import 'package:flutter_money_manager/widgets/settings.dart';
 
 class NavigationProvider with ChangeNotifier {
   NavigationItem currentNav = NavigationItem.HOME;

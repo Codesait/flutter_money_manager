@@ -3,6 +3,7 @@ import 'package:flutter_money_manager/models/category.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 
 import '../transaction_type.dart';
+import 'color_circle.dart';
 
 class Report extends StatelessWidget {
   Widget _buildTransactionWidgets(List<ListItem> items) {
@@ -30,15 +31,7 @@ class Report extends StatelessWidget {
           TransactionItem item = items[index];
           return ListTile(
             onTap: () {},
-            leading: Container(
-              height: 40.0,
-              width: 40.0,
-              alignment: Alignment.center,
-              child: CircleAvatar(
-                backgroundColor: item.transaction.category.color,
-                radius: 10.0,
-              ),
-            ),
+            leading: ColorCircle(color: item.transaction.category.color),
             title: Text(
               '${item.transaction.amount}' +
                   ' - ${item.transaction.category.transactionType.name}',
