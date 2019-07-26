@@ -31,7 +31,8 @@ class NavigationProvider with ChangeNotifier {
       case NavigationItem.SETTINGS:
         return Text('Settings');
       default:
-        return Text('Home');
+      // Do not show title in Home.
+        return Text('');
     }
   }
 
