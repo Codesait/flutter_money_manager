@@ -96,9 +96,13 @@ class _TransactionRouteState extends State<TransactionRoute> {
             ListTile(
               onTap: () => _showCategoryChooserDialog(context),
               leading: Icon(Icons.category),
-              title: Text(_transaction.category == null
-                  ? 'Choose Category'
-                  : _transaction.category.name),
+              title: Text(
+                _transaction.category == null
+                    ? 'Choose Category'
+                    : _transaction.category.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               trailing: Icon(Icons.arrow_drop_down),
             ),
             Divider(),
@@ -120,6 +124,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
                   border: InputBorder.none,
                   hintText: 'Description',
                 ),
+                maxLines: 4,
               ),
             ),
             Divider(),
