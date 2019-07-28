@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile(
+                selected: nav.currentNav == NavigationItem.HOME,
                 leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
                 },
               ),
               ListTile(
+                selected: nav.currentNav == NavigationItem.REPORT,
                 leading: Icon(Icons.assignment),
                 title: Text('Report'),
                 onTap: () {
@@ -36,6 +38,7 @@ class MyApp extends StatelessWidget {
                 },
               ),
               ListTile(
+                selected: nav.currentNav == NavigationItem.CATEGORIES,
                 leading: Icon(Icons.category),
                 title: Text('Categories'),
                 onTap: () {
@@ -44,6 +47,7 @@ class MyApp extends StatelessWidget {
                 },
               ),
               ListTile(
+                selected: nav.currentNav == NavigationItem.SETTINGS,
                 leading: Icon(Icons.settings),
                 title: Text('Settings'),
                 onTap: () {
