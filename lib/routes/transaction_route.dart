@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
+import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/widgets/category_list.dart';
 
 class TransactionRoute extends StatefulWidget {
@@ -8,7 +9,30 @@ class TransactionRoute extends StatefulWidget {
 }
 
 class _TransactionRouteState extends State<TransactionRoute> {
-  Transaction _transaction = Transaction();
+  Transaction _transaction = Transaction(date: DateTime.now());
+
+  Future _showDatePicker(BuildContext context) async {
+    DateTime dateTime = await showDatePicker(
+      context: context,
+      initialDate: _transaction.date,
+      firstDate: DateTime(1996),
+      lastDate: DateTime(3000),
+    );
+
+    if (dateTime != null && dateTime != _transaction.date) {
+      DateTime now = DateTime.now();
+      setState(() {
+        _transaction.date = DateTime(
+          dateTime.year,
+          dateTime.month,
+          dateTime.day,
+          now.hour,
+          now.minute,
+          now.second,
+        );
+      });
+    }
+  }
 
   void _showCategoryChooserDialog(BuildContext context) {
     showDialog(
@@ -64,9 +88,9 @@ class _TransactionRouteState extends State<TransactionRoute> {
         child: Column(
           children: <Widget>[
             ListTile(
-              onTap: () {},
+              onTap: () => _showDatePicker(context),
               leading: Icon(Icons.date_range),
-              title: Text(DateTime.now().toString()),
+              title: Text(standardLongDateFormat(_transaction.date)),
             ),
             Divider(),
             ListTile(

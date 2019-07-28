@@ -27,6 +27,9 @@ dependencies:
   # The following is state management library (not from flutter community).
   provider: ^3.0.0+1
 
+  # The following is to format date
+  intl: ^0.15.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
