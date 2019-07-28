@@ -14,7 +14,12 @@ class NavigationProvider with ChangeNotifier {
       case NavigationItem.REPORT:
         return Report();
       case NavigationItem.CATEGORIES:
-        return Categories();
+        return Categories(
+          onTap: (category) {
+            // TODO : go to category detail page
+            print(category.name);
+          },
+        );
       case NavigationItem.SETTINGS:
         return Settings();
       default:

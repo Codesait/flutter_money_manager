@@ -5,11 +5,23 @@ import '../transaction_type.dart';
 import 'color_circle.dart';
 
 class Categories extends StatelessWidget {
+  final ValueChanged<Category> onTap;
+  final bool shrinkWrap;
+
+  Categories({
+    Key key,
+    @required this.onTap,
+    this.shrinkWrap = false,
+  })
+      : assert(onTap != null),
+        super(key: key);
+
   Widget _buildCategoryWidgets(List<Category> categories) {
     return ListView.builder(
+      shrinkWrap: shrinkWrap,
       itemBuilder: (context, index) {
         return ListTile(
-          onTap: () {},
+          onTap: () => onTap(categories[index]),
           leading: ColorCircle(color: categories[index].color),
           title: Text(
             categories[index].name,
