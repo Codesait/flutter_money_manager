@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/consts.dart' as myConst;
+import 'package:flutter_money_manager/models/category.dart';
+import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:flutter_money_manager/tiles/color_tile.dart';
 
 import '../transaction_type.dart';
@@ -10,12 +12,16 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final _nameController = TextEditingController();
+
   Color _color = Colors.pink;
-  int _radioGroupValue = TransactionType.EXPENSE.value;
+  TransactionType _transactionType = TransactionType.EXPENSE;
 
   void _onRadioChanged(int value) {
     setState(() {
-      _radioGroupValue = value;
+      _transactionType = TransactionType.valueOf(value);
     });
   }
 
@@ -53,7 +59,14 @@ class _CategoryRouteState extends State<CategoryRoute> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.check),
-          onPressed: () {},
+          onPressed: () {
+            CategoryTable().insert(Category(
+              color: _color,
+              name: _nameController.text,
+              transactionType: _transactionType,
+            ));
+            Navigator.pop(context);
+          },
         ),
       ],
     );
@@ -78,6 +91,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
             ),
             SizedBox(height: 16.0),
             TextField(
+              controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Category Name',
                 border: OutlineInputBorder(
@@ -92,7 +106,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
                   children: <Widget>[
                     Radio(
                       value: TransactionType.EXPENSE.value,
-                      groupValue: _radioGroupValue,
+                      groupValue: _transactionType.value,
                       onChanged: _onRadioChanged,
                     ),
                     Text(TransactionType.EXPENSE.name),
@@ -102,7 +116,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
                   children: <Widget>[
                     Radio(
                       value: TransactionType.INCOME.value,
-                      groupValue: _radioGroupValue,
+                      groupValue: _transactionType.value,
                       onChanged: _onRadioChanged,
                     ),
                     Text(TransactionType.INCOME.name),

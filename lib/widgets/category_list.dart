@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/category.dart';
+import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 
-import '../transaction_type.dart';
 import 'color_circle.dart';
 
 class Categories extends StatelessWidget {
@@ -37,35 +37,16 @@ class Categories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Category> categories = [
-      Category(
-        color: Colors.yellow,
-        name: 'YBS',
-        transactionType: TransactionType.EXPENSE,
-      ),
-      Category(
-        color: Colors.green,
-        name: 'Market',
-        transactionType: TransactionType.EXPENSE,
-      ),
-      Category(
-        color: Colors.blue,
-        name: 'Internet',
-        transactionType: TransactionType.EXPENSE,
-      ),
-      Category(
-        color: Colors.orange,
-        name:
-        'Phone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone BillPhone Bill',
-        transactionType: TransactionType.EXPENSE,
-      ),
-      Category(
-        color: Colors.pink,
-        name: 'Shopping',
-        transactionType: TransactionType.EXPENSE,
-      ),
-    ];
-
-    return _buildCategoryWidgets(categories);
+    return FutureBuilder(
+        future: CategoryTable().getAll(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          } else if (snapshot.hasData) {
+            return _buildCategoryWidgets(snapshot.data);
+          } else {
+            return new CircularProgressIndicator();
+          }
+        });
   }
 }

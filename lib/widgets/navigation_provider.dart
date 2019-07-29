@@ -17,7 +17,7 @@ class NavigationProvider with ChangeNotifier {
         return Categories(
           onTap: (category) {
             // TODO : go to category detail page
-            print(category.name);
+            print(category.toString());
           },
         );
       case NavigationItem.SETTINGS:

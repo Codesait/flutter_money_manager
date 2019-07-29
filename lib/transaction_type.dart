@@ -10,4 +10,15 @@ class TransactionType {
   int get value => _value;
 
   String get name => _name;
+
+  static TransactionType valueOf(int value) {
+    switch (value) {
+      case 1:
+        return INCOME;
+      case 2:
+        return EXPENSE;
+      default:
+        return null;
+    }
+  }
 }
