@@ -1,21 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 
 import '../transaction_type.dart';
 
 class Category {
-  final int id;
-  final ColorSwatch color;
-  final String name;
-  final TransactionType transactionType;
+  int id;
+  Color color;
+  String name;
+  TransactionType transactionType;
 
-  Category({
-    this.id = 0,
-    @required this.color,
-    @required this.name,
-    @required this.transactionType,
-  })  : assert(id >= 0),
-        assert(color != null),
-        assert(name != null),
-        assert(transactionType != null);
+  Category({this.id, this.color, this.name, this.transactionType});
+
+  Category.fromMap(Map<String, dynamic> map) {
+    id = map[CategoryTable().id];
+    color = Color(map[CategoryTable().color]);
+    name = map[CategoryTable().name];
+    transactionType =
+        TransactionType.valueOf(int.parse(map[CategoryTable().type]));
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      CategoryTable().id: id,
+      CategoryTable().color: color.value,
+      CategoryTable().name: name,
+      CategoryTable().type: transactionType.value,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Category{\n'
+        'id : $id\n'
+        'color : ${color.value}\n'
+        'name : name\n'
+        'transactionType : ${transactionType.name}\n'
+        '}';
+  }
 }
