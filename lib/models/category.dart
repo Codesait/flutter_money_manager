@@ -15,8 +15,7 @@ class Category {
     id = map[CategoryTable().id];
     color = Color(map[CategoryTable().color]);
     name = map[CategoryTable().name];
-    transactionType =
-        TransactionType.valueOf(int.parse(map[CategoryTable().type]));
+    transactionType = TransactionType.valueOf(map[CategoryTable().type]);
   }
 
   Map<String, dynamic> toMap() {
