@@ -12,6 +12,13 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a GlobalKey<FormState>,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final _nameController = TextEditingController();
@@ -61,8 +68,11 @@ class _CategoryRouteState extends State<CategoryRoute> {
         IconButton(
           icon: Icon(Icons.check),
           onPressed: () {
-            CategoryTable().insert(_category);
-            Navigator.pop(context);
+            if (_formKey.currentState.validate()) {
+              _category.name = _nameController.text;
+              CategoryTable().insert(_category);
+              Navigator.pop(context);
+            }
           },
         ),
       ],
@@ -87,13 +97,23 @@ class _CategoryRouteState extends State<CategoryRoute> {
               child: _buildColorPicker(),
             ),
             SizedBox(height: 16.0),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Category Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Category Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
                 ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    // TODO : check for only blank/space case
+                    return 'Please enter category name!';
+                  }
+                  return null;
+                },
               ),
             ),
             SizedBox(height: 16.0),
