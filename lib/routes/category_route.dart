@@ -15,13 +15,14 @@ class _CategoryRouteState extends State<CategoryRoute> {
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final _nameController = TextEditingController();
-
-  Color _color = Colors.pink;
-  TransactionType _transactionType = TransactionType.EXPENSE;
+  final _category = Category(
+    color: Colors.lime,
+    transactionType: TransactionType.EXPENSE,
+  );
 
   void _onRadioChanged(int value) {
     setState(() {
-      _transactionType = TransactionType.valueOf(value);
+      _category.transactionType = TransactionType.valueOf(value);
     });
   }
 
@@ -31,11 +32,11 @@ class _CategoryRouteState extends State<CategoryRoute> {
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
         return ColorTile(
-          selected: _color == myConst.colors[index],
+          selected: _category.color == myConst.colors[index],
           color: myConst.colors[index],
           onTap: (color) {
             setState(() {
-              _color = color;
+              _category.color = color;
             });
           },
         );
@@ -60,11 +61,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
         IconButton(
           icon: Icon(Icons.check),
           onPressed: () {
-            CategoryTable().insert(Category(
-              color: _color,
-              name: _nameController.text,
-              transactionType: _transactionType,
-            ));
+            CategoryTable().insert(_category);
             Navigator.pop(context);
           },
         ),
@@ -80,7 +77,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
               width: 42.0,
               height: 42.0,
               decoration: BoxDecoration(
-                color: _color,
+                color: _category.color,
                 shape: BoxShape.circle,
               ),
             ),
@@ -106,7 +103,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
                   children: <Widget>[
                     Radio(
                       value: TransactionType.EXPENSE.value,
-                      groupValue: _transactionType.value,
+                      groupValue: _category.transactionType.value,
                       onChanged: _onRadioChanged,
                     ),
                     Text(TransactionType.EXPENSE.name),
@@ -116,7 +113,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
                   children: <Widget>[
                     Radio(
                       value: TransactionType.INCOME.value,
-                      groupValue: _transactionType.value,
+                      groupValue: _category.transactionType.value,
                       onChanged: _onRadioChanged,
                     ),
                     Text(TransactionType.INCOME.name),
@@ -138,9 +135,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
         canvasColor: Theme
             .of(context)
             .primaryColor,
-        accentColor: _color,
-        cursorColor: _color,
-        toggleableActiveColor: _color,
+        accentColor: _category.color,
+        cursorColor: _category.color,
+        toggleableActiveColor: _category.color,
       ),
     );
   }
