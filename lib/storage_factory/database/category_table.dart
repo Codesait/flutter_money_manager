@@ -4,11 +4,11 @@ import 'package:sqflite/sqflite.dart';
 import 'database_helper.dart';
 
 class CategoryTable {
-  final String tableName = 'category_table';
-  final String id = 'category_id';
-  final String color = 'category_color';
-  final String name = 'category_name';
-  final String type = 'transaction_type';
+  final tableName = 'category_table';
+  final id = 'category_id';
+  final color = 'category_color';
+  final name = 'category_name';
+  final type = 'transaction_type';
 
   void onCreate(Database db, int version) {
     db.execute('CREATE TABLE $tableName('
