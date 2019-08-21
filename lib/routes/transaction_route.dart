@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
+import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/widgets/category_list.dart';
 
@@ -9,7 +10,19 @@ class TransactionRoute extends StatefulWidget {
 }
 
 class _TransactionRouteState extends State<TransactionRoute> {
-  Transaction _transaction = Transaction(date: DateTime.now());
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a GlobalKey<FormState>,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final _amountController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  MyTransaction _transaction = MyTransaction(date: DateTime.now());
 
   Future _showDatePicker(BuildContext context) async {
     DateTime dateTime = await showDatePicker(
@@ -77,7 +90,22 @@ class _TransactionRouteState extends State<TransactionRoute> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.check),
-          onPressed: () {},
+          onPressed: () {
+            if (_transaction.category == null) {
+              print("Please choose category!");
+              return;
+            }
+
+            if (_formKey.currentState.validate()) {
+              _transaction.amount = double.parse(_amountController.text);
+              if (_descriptionController.text.isNotEmpty) {
+                _transaction.description = _descriptionController.text;
+              }
+
+              TransactionTable().insert(_transaction);
+              Navigator.pop(context);
+            }
+          },
         ),
       ],
     );
@@ -85,50 +113,61 @@ class _TransactionRouteState extends State<TransactionRoute> {
     final body = SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              onTap: () => _showDatePicker(context),
-              leading: Icon(Icons.date_range),
-              title: Text(standardLongDateFormat(_transaction.date)),
-            ),
-            Divider(),
-            ListTile(
-              onTap: () => _showCategoryChooserDialog(context),
-              leading: Icon(Icons.category),
-              title: Text(
-                _transaction.category == null
-                    ? 'Choose Category'
-                    : _transaction.category.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                onTap: () => _showDatePicker(context),
+                leading: Icon(Icons.date_range),
+                title: Text(standardLongDateFormat(_transaction.date)),
               ),
-              trailing: Icon(Icons.arrow_drop_down),
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.monetization_on),
-              title: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Amount',
+              Divider(),
+              ListTile(
+                onTap: () => _showCategoryChooserDialog(context),
+                leading: Icon(Icons.category),
+                title: Text(
+                  _transaction.category == null
+                      ? 'Choose Category'
+                      : _transaction.category.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                keyboardType: TextInputType.number,
+                trailing: Icon(Icons.arrow_drop_down),
               ),
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.description),
-              title: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Description',
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.monetization_on),
+                title: TextFormField(
+                  controller: _amountController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Amount',
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter amount!';
+                    }
+                    return null;
+                  },
                 ),
-                maxLines: 4,
               ),
-            ),
-            Divider(),
-          ],
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.description),
+                title: TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Description',
+                  ),
+                  maxLines: 4,
+                ),
+              ),
+              Divider(),
+            ],
+          ),
         ),
       ),
     );

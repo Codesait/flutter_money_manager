@@ -57,7 +57,7 @@ class Report extends StatelessWidget {
     List<ListItem> items = [
       HeadingItem(heading: 'Sun 21, Jul 2019'),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 1000,
           description: 'Go and back',
@@ -69,7 +69,7 @@ class Report extends StatelessWidget {
         ),
       ),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 500,
           description: 'Street foods',
@@ -81,7 +81,7 @@ class Report extends StatelessWidget {
         ),
       ),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 4000,
           description: 'Meat and vegetables',
@@ -94,7 +94,7 @@ class Report extends StatelessWidget {
       ),
       HeadingItem(heading: 'Sat 20, Jul 2019'),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 5000,
           description: 'Meat and vegetables',
@@ -106,7 +106,7 @@ class Report extends StatelessWidget {
         ),
       ),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 1000,
           description: 'Top up MyTel',
@@ -119,7 +119,7 @@ class Report extends StatelessWidget {
       ),
       HeadingItem(heading: 'Fri 19, Jul 2019'),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 5000,
           description: 'Meat and vegetables',
@@ -131,7 +131,7 @@ class Report extends StatelessWidget {
         ),
       ),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 2500,
           description: 'Meet and eat with brother at Thuka'
@@ -144,7 +144,7 @@ class Report extends StatelessWidget {
         ),
       ),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 1600,
           description: 'Go and back from Thuka.',
@@ -156,7 +156,7 @@ class Report extends StatelessWidget {
         ),
       ),
       TransactionItem(
-        transaction: Transaction(
+        transaction: MyTransaction(
           date: DateTime.now(),
           amount: 20000,
           description: 'Shopping and eat.',
@@ -187,7 +187,7 @@ class HeadingItem implements ListItem {
 
 // A ListItem that contains data to display a message.
 class TransactionItem implements ListItem {
-  final Transaction transaction;
+  final MyTransaction transaction;
 
   TransactionItem({
     @required this.transaction,

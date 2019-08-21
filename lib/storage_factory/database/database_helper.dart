@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'category_table.dart';
+import 'transaction_table.dart';
 
 class DatabaseHelper {
   final String _databaseName = 'money_manager.db';
@@ -26,6 +27,7 @@ class DatabaseHelper {
 
   void _onCreate(Database db, int version) async {
     CategoryTable().onCreate(db, version);
+    TransactionTable().onCreate(db, version);
 
     // create other tables ...
   }
