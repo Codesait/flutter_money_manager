@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/category.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
+import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 
 import '../transaction_type.dart';
 import 'color_circle.dart';
@@ -29,6 +30,9 @@ class Report extends StatelessWidget {
           );
         } else {
           TransactionItem item = items[index];
+          String description = item.transaction.description == null
+              ? ''
+              : '- ${item.transaction.description}';
           return ListTile(
             onTap: () {},
             leading: ColorCircle(color: item.transaction.category.color),
@@ -39,8 +43,7 @@ class Report extends StatelessWidget {
               maxLines: 1,
             ),
             subtitle: Text(
-              '${item.transaction.category.name}' +
-                  ' - ${item.transaction.description}',
+              '${item.transaction.category.name} $description',
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -50,6 +53,15 @@ class Report extends StatelessWidget {
       },
       itemCount: items.length,
     );
+  }
+
+  List<ListItem> _convertTransactionListToListItem(
+      List<MyTransaction> transactions) {
+    List<ListItem> items = [];
+    for (MyTransaction transaction in transactions) {
+      items.add(TransactionItem(transaction: transaction));
+    }
+    return items;
   }
 
   @override
@@ -169,7 +181,19 @@ class Report extends StatelessWidget {
       ),
     ];
 
-    return _buildTransactionWidgets(items);
+    return FutureBuilder(
+      future: TransactionTable().getAll(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
+        } else if (snapshot.hasData) {
+          return _buildTransactionWidgets(
+              _convertTransactionListToListItem(snapshot.data));
+        } else {
+          return new CircularProgressIndicator();
+        }
+      },
+    );
   }
 }
 

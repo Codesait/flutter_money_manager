@@ -1,4 +1,5 @@
 import 'package:flutter_money_manager/models/transaction.dart';
+import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'database_helper.dart';
@@ -15,7 +16,7 @@ class TransactionTable {
     db.execute('CREATE TABLE $tableName('
         '$id INTEGER PRIMARY KEY AUTOINCREMENT,'
         '$date INTEGER,'
-        '$amount INTEGER,'
+        '$amount REAL,'
         '$description TEXT,'
         '$category INTEGER)');
 
@@ -41,8 +42,11 @@ class TransactionTable {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
-    // Query the table for all the MyTransaction Models.
-    final List<Map<String, dynamic>> maps = await db.query(tableName);
+    // Query the table for all the records.
+    String rawQuery = 'SELECT * FROM $tableName'
+        ' LEFT JOIN ${CategoryTable().tableName}'
+        ' ON $category=${CategoryTable().id}';
+    final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
 
     // Convert the List<Map<String, dynamic> into a List<MyTransaction>.
     return List.generate(maps.length, (i) {

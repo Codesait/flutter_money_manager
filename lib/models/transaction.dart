@@ -20,16 +20,16 @@ class MyTransaction {
 
   MyTransaction.fromMap(Map<String, dynamic> map) {
     id = map[TransactionTable().id];
-    date = map[TransactionTable().date];
+    date = DateTime.fromMillisecondsSinceEpoch(map[TransactionTable().date]);
     amount = map[TransactionTable().amount];
     description = map[TransactionTable().description];
-    category = map[TransactionTable().category];
+    category = Category.fromMap(map);
   }
 
   Map<String, dynamic> toMap() {
     return {
       TransactionTable().id: id,
-      TransactionTable().date: date.millisecond,
+      TransactionTable().date: date.millisecondsSinceEpoch,
       TransactionTable().amount: amount,
       TransactionTable().description: description,
       TransactionTable().category: category.id,

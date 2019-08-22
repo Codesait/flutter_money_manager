@@ -11,6 +11,7 @@ class DatabaseHelper {
   static Database _db;
 
   Future<Database> get db async {
+    // Get a singleton database
     if (_db == null) {
       _db = await _initDb();
     }
@@ -18,8 +19,16 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDb() async {
+    // Get a location using getDatabasesPath
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, _databaseName);
+
+    // Delete the database
+    await deleteDatabase(path);
+
+    // Open the database
     return await openDatabase(
-      join(await getDatabasesPath(), _databaseName),
+      path,
       version: _databaseVersion,
       onCreate: _onCreate,
     );
@@ -29,6 +38,6 @@ class DatabaseHelper {
     CategoryTable().onCreate(db, version);
     TransactionTable().onCreate(db, version);
 
-    // create other tables ...
+    // Create other tables ...
   }
 }
