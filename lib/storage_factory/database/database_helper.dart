@@ -23,8 +23,9 @@ class DatabaseHelper {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, _databaseName);
 
+    // This will delete old/previous database when app is opened
     // Delete the database
-    await deleteDatabase(path);
+    // await deleteDatabase(path);
 
     // Open the database
     return await openDatabase(
