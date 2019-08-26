@@ -45,7 +45,7 @@ class Categories extends StatelessWidget {
           } else if (snapshot.hasData) {
             return _buildCategoryWidgets(snapshot.data);
           } else {
-            return new CircularProgressIndicator();
+            return Center(child: new CircularProgressIndicator());
           }
         });
   }

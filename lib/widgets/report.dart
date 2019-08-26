@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/category.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
+import 'package:flutter_money_manager/utils/date_format_util.dart';
+import 'package:flutter_money_manager/utils/number_format_util.dart';
 
 import '../transaction_type.dart';
 import 'color_circle.dart';
@@ -37,7 +39,7 @@ class Report extends StatelessWidget {
             onTap: () {},
             leading: ColorCircle(color: item.transaction.category.color),
             title: Text(
-              '${item.transaction.amount}' +
+              standardNumberFormat(item.transaction.amount) +
                   ' - ${item.transaction.category.transactionType.name}',
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -47,7 +49,7 @@ class Report extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
-            trailing: Text('${item.transaction.date.year}'),
+            trailing: Text(standardHourAndMinuteFormat(item.transaction.date)),
           );
         }
       },

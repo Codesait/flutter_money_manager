@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:meta/meta.dart';
 
 class SummaryTile extends StatelessWidget {
@@ -30,7 +31,7 @@ class SummaryTile extends StatelessWidget {
           child: Icon(iconData),
         ),
       ),
-      title: Text(amount.toString()),
+      title: Text(standardNumberFormat(amount)),
       subtitle: Text(
         label,
         style: Theme.of(context).textTheme.caption,
