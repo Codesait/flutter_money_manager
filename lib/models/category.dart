@@ -32,7 +32,7 @@ class Category {
     return 'Category{\n'
         'id : $id\n'
         'color : ${color.value}\n'
-        'name : name\n'
+        'name : $name\n'
         'transactionType : ${transactionType.name}\n'
         '}';
   }

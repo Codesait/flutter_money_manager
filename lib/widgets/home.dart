@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/tiles/summary_tile.dart';
 
 class Home extends StatelessWidget {
@@ -73,12 +74,24 @@ class Home extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.portrait) {
-            return _portrait;
+      child: FutureBuilder(
+        future: TransactionTable().getTotals(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          } else if (snapshot.hasData) {
+            print('snapshot.data : ${snapshot.data}');
+            return OrientationBuilder(
+              builder: (context, orientation) {
+                if (orientation == Orientation.portrait) {
+                  return _portrait;
+                } else {
+                  return _landscape;
+                }
+              },
+            );
           } else {
-            return _landscape;
+            return new CircularProgressIndicator();
           }
         },
       ),
