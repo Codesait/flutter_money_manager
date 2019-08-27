@@ -40,7 +40,7 @@ class MyTransaction {
   String toString() {
     return 'Transaction{\n'
         'id : $id\n'
-        'date : ${standardLongDateFormat(date)}\n'
+        'date : ${standardDateFormat(date)}\n'
         'amount : $amount\n'
         'description : $description\n'
         'category : $category\n'

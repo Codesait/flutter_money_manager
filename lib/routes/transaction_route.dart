@@ -66,7 +66,6 @@ class _TransactionRouteState extends State<TransactionRoute> {
                   setState(() {
                     _transaction.category = category;
                   });
-                  print(_transaction.category.name);
                   Navigator.pop(context);
                 },
               ),
@@ -92,7 +91,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
           icon: Icon(Icons.check),
           onPressed: () {
             if (_transaction.category == null) {
-              print("Please choose category!");
+              // TODO : give feedback to user to choose category
               return;
             }
 
@@ -120,7 +119,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
               ListTile(
                 onTap: () => _showDatePicker(context),
                 leading: Icon(Icons.date_range),
-                title: Text(standardLongDateFormat(_transaction.date)),
+                title: Text(standardDateFormat(_transaction.date)),
               ),
               Divider(),
               ListTile(

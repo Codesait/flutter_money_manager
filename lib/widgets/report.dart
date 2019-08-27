@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_money_manager/models/category.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
 
-import '../transaction_type.dart';
 import 'color_circle.dart';
 
 class Report extends StatelessWidget {
@@ -49,7 +47,7 @@ class Report extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
-            trailing: Text(standardHourAndMinuteFormat(item.transaction.date)),
+            trailing: Text(standardTimeFormat(item.transaction.date)),
           );
         }
       },
@@ -57,132 +55,31 @@ class Report extends StatelessWidget {
     );
   }
 
-  List<ListItem> _convertTransactionListToListItem(
-      List<MyTransaction> transactions) {
-    List<ListItem> items = [];
-    for (MyTransaction transaction in transactions) {
-      items.add(TransactionItem(transaction: transaction));
+  List<ListItem> _convertListOfMyTransactionToListItem(
+      List<MyTransaction> transactions,
+      List<ListItem> list,) {
+    if (transactions.length == 0) {
+      return list;
     }
-    return items;
+
+    String key = shortDateFormat(getDateWithoutTime(transactions[0].date));
+
+    list.add(HeadingItem(heading: key));
+
+    for (MyTransaction t in transactions) {
+      if (key == shortDateFormat(getDateWithoutTime(t.date))) {
+        list.add(TransactionItem(transaction: t));
+      }
+    }
+
+    transactions.removeWhere(
+            (t) => key == shortDateFormat(getDateWithoutTime(t.date)));
+
+    return _convertListOfMyTransactionToListItem(transactions, list);
   }
 
   @override
   Widget build(BuildContext context) {
-    List<ListItem> items = [
-      HeadingItem(heading: 'Sun 21, Jul 2019'),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 1000,
-          description: 'Go and back',
-          category: Category(
-            color: Colors.yellow,
-            name: 'YBS',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 500,
-          description: 'Street foods',
-          category: Category(
-            color: Colors.orange,
-            name: 'Food',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 4000,
-          description: 'Meat and vegetables',
-          category: Category(
-            color: Colors.green,
-            name: 'Market',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      HeadingItem(heading: 'Sat 20, Jul 2019'),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 5000,
-          description: 'Meat and vegetables',
-          category: Category(
-            color: Colors.green,
-            name: 'Market',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 1000,
-          description: 'Top up MyTel',
-          category: Category(
-            color: Colors.orange,
-            name: 'Phone Bill',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      HeadingItem(heading: 'Fri 19, Jul 2019'),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 5000,
-          description: 'Meat and vegetables',
-          category: Category(
-            color: Colors.green,
-            name: 'Market',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 2500,
-          description: 'Meet and eat with brother at Thuka'
-              ' with so so long reason and history about him.',
-          category: Category(
-            color: Colors.red,
-            name: 'Meeting',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 1600,
-          description: 'Go and back from Thuka.',
-          category: Category(
-            color: Colors.yellow,
-            name: 'YBS',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-      TransactionItem(
-        transaction: MyTransaction(
-          date: DateTime.now(),
-          amount: 20000,
-          description: 'Shopping and eat.',
-          category: Category(
-            color: Colors.pink,
-            name: 'Shopping',
-            transactionType: TransactionType.EXPENSE,
-          ),
-        ),
-      ),
-    ];
-
     return FutureBuilder(
       future: TransactionTable().getAll(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -190,7 +87,11 @@ class Report extends StatelessWidget {
           return Center(child: Text(snapshot.error.toString()));
         } else if (snapshot.hasData) {
           return _buildTransactionWidgets(
-              _convertTransactionListToListItem(snapshot.data));
+            _convertListOfMyTransactionToListItem(
+              snapshot.data,
+              List<ListItem>(),
+            ),
+          );
         } else {
           return new CircularProgressIndicator();
         }

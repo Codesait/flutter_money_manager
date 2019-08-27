@@ -20,8 +20,6 @@ class TransactionTable {
         '$amount REAL,'
         '$description TEXT,'
         '$category INTEGER)');
-
-    print('$tableName is created successfully!');
   }
 
   void insert(MyTransaction transaction) async {
@@ -35,8 +33,6 @@ class TransactionTable {
       transaction.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-
-    print('Transaction($transaction) is inserted successfully!');
   }
 
   Future<List<MyTransaction>> getAll() async {
