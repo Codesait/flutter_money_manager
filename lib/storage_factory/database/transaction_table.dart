@@ -46,7 +46,8 @@ class TransactionTable {
     // Query the table for all the records.
     String rawQuery = 'SELECT * FROM $tableName'
         ' LEFT JOIN ${CategoryTable().tableName}'
-        ' ON $category=${CategoryTable().id}';
+        ' ON $category=${CategoryTable().id}'
+        ' ORDER BY $date DESC';
     final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
 
     // Convert the List<Map<String, dynamic> into a List<MyTransaction>.

@@ -94,7 +94,7 @@ class Home extends StatelessWidget {
             // TODO : go to report with "INCOME" filter
           },
           iconData: Icons.trending_up,
-          amount: incomeTotal.amount,
+          amount: incomeTotal != null ? incomeTotal.amount : 0,
           label: 'Total Income',
         ),
         Divider(),
@@ -103,7 +103,7 @@ class Home extends StatelessWidget {
             // TODO : go to report with "EXPENSE" filter
           },
           iconData: Icons.trending_down,
-          amount: expenseTotal.amount,
+          amount: expenseTotal != null ? expenseTotal.amount : 0,
           label: 'Total Expense',
         ),
         Divider(),
