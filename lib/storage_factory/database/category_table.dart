@@ -18,14 +18,17 @@ class CategoryTable {
         '$type INTEGER)');
   }
 
-  void insert(Category category) async {
+  Future<int> insert(Category category) async {
+    // Checking backend validation.
+    category.checkValidationAndThrow();
+
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
     // Insert the Category into the correct table. Also specify the
     // 'conflictAlgorithm'. In this case, if the same category is inserted
     // multiple times, it replaces the previous data.
-    await db.insert(
+    return db.insert(
       tableName,
       category.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,

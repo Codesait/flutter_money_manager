@@ -33,6 +33,21 @@ class _CategoryRouteState extends State<CategoryRoute> {
     });
   }
 
+  Future<void> _saveCategory() async {
+    // Checking frontend validation.
+    if (_formKey.currentState.validate()) {
+      _category.name = _nameController.text;
+
+      try {
+        await CategoryTable().insert(_category);
+        Navigator.pop(context);
+      } catch (exception) {
+        // TODO : give feedback to user
+        print('_saveCategory() : Fail to save category! $exception');
+      }
+    }
+  }
+
   Widget _buildColorPicker() {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
@@ -65,16 +80,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
       title: Text('Category'),
       centerTitle: true,
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.check),
-          onPressed: () {
-            if (_formKey.currentState.validate()) {
-              _category.name = _nameController.text;
-              CategoryTable().insert(_category);
-              Navigator.pop(context);
-            }
-          },
-        ),
+        IconButton(icon: Icon(Icons.check), onPressed: () => _saveCategory()),
       ],
     );
 
@@ -108,9 +114,11 @@ class _CategoryRouteState extends State<CategoryRoute> {
                   ),
                 ),
                 validator: (value) {
-                  if (value.isEmpty) {
-                    // TODO : check for only blank/space case
-                    return 'Please enter category name!';
+                  if (value
+                      .trim()
+                      .isEmpty) {
+                    _nameController.text = '';
+                    return 'Enter Category Name!';
                   }
                   return null;
                 },

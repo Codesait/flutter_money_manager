@@ -36,6 +36,20 @@ class MyTransaction {
     };
   }
 
+  void checkValidationAndThrow() {
+    if (date == null) {
+      throw Exception("No date!");
+    }
+
+    if (amount <= 0) {
+      throw Exception("No amount!");
+    }
+
+    if (category == null) {
+      throw Exception("No category!");
+    }
+  }
+
   @override
   String toString() {
     return 'Transaction{\n'

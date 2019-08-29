@@ -74,6 +74,32 @@ class _TransactionRouteState extends State<TransactionRoute> {
     );
   }
 
+  Future<void> _saveTransaction() async {
+    // Checking frontend validation.
+    if (_transaction.category == null) {
+      // TODO : give feedback to user to choose category
+      print('_saveTransaction() : Please choose category!');
+      return;
+    }
+
+    if (_formKey.currentState.validate()) {
+      _transaction.amount = double.parse(_amountController.text);
+      if (_descriptionController.text
+          .trim()
+          .isNotEmpty) {
+        _transaction.description = _descriptionController.text;
+      }
+
+      try {
+        await TransactionTable().insert(_transaction);
+        Navigator.pop(context);
+      } catch (exception) {
+        // TODO : give feedback to user
+        print('_saveCategory() : Fail to save transaction! $exception');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
@@ -89,22 +115,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.check),
-          onPressed: () {
-            if (_transaction.category == null) {
-              // TODO : give feedback to user to choose category
-              return;
-            }
-
-            if (_formKey.currentState.validate()) {
-              _transaction.amount = double.parse(_amountController.text);
-              if (_descriptionController.text.isNotEmpty) {
-                _transaction.description = _descriptionController.text;
-              }
-
-              TransactionTable().insert(_transaction);
-              Navigator.pop(context);
-            }
-          },
+          onPressed: () => _saveTransaction(),
         ),
       ],
     );
@@ -146,8 +157,15 @@ class _TransactionRouteState extends State<TransactionRoute> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return 'Please enter amount!';
+                      return 'Enter amount!';
                     }
+
+                    try {
+                      double.parse(value);
+                    } catch (formatException) {
+                      return 'Invalid amount!';
+                    }
+
                     return null;
                   },
                 ),

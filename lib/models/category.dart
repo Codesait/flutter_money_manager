@@ -27,6 +27,20 @@ class Category {
     };
   }
 
+  void checkValidationAndThrow() {
+    if (color == null) {
+      throw Exception("No color!");
+    }
+
+    if (name == null || name.isEmpty) {
+      throw Exception("No name!");
+    }
+
+    if (transactionType == null) {
+      throw Exception("No transaction type!");
+    }
+  }
+
   @override
   String toString() {
     return 'Category{\n'

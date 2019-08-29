@@ -9,7 +9,7 @@ String standardTimeFormat(DateTime date) {
 }
 
 String shortDateFormat(DateTime date) {
-  return DateFormat('EEE d, MMM yyyy').format(date);
+  return DateFormat('EEE, MMM d, yyyy').format(date);
 }
 
 DateTime getDateWithoutTime(DateTime date) {

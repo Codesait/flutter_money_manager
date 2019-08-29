@@ -22,13 +22,16 @@ class TransactionTable {
         '$category INTEGER)');
   }
 
-  void insert(MyTransaction transaction) async {
+  Future<int> insert(MyTransaction transaction) async {
+    // Checking backend validation
+    transaction.checkValidationAndThrow();
+
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
     // Insert the TransactionModel into the table. Also specify the 'conflictAlgorithm'.
     // In this case, if the same category is inserted multiple times, it replaces the previous data.
-    await db.insert(
+    return await db.insert(
       tableName,
       transaction.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
