@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
-import 'package:flutter_money_manager/widgets/category_list.dart';
+import 'package:flutter_money_manager/widgets/categories.dart';
 
 class TransactionRoute extends StatefulWidget {
   @override
@@ -155,6 +155,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
                     hintText: 'Amount',
                   ),
                   keyboardType: TextInputType.number,
+                  autofocus: true,
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Enter amount!';

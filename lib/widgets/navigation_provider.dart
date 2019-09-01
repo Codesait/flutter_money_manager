@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/fabs/fabs.dart';
-import 'package:flutter_money_manager/widgets/category_list.dart';
+import 'package:flutter_money_manager/widgets/categories.dart';
 import 'package:flutter_money_manager/widgets/home.dart';
-import 'package:flutter_money_manager/widgets/report.dart';
 import 'package:flutter_money_manager/widgets/settings.dart';
+import 'package:flutter_money_manager/widgets/transactions.dart';
 
 class NavigationProvider with ChangeNotifier {
   NavigationItem currentNav = NavigationItem.HOME;
@@ -30,7 +30,7 @@ class NavigationProvider with ChangeNotifier {
   Widget getAppBarTitle() {
     switch (currentNav) {
       case NavigationItem.REPORT:
-        return Text('Report');
+        return Text('Transactions');
       case NavigationItem.CATEGORIES:
         return Text('Categories');
       case NavigationItem.SETTINGS:

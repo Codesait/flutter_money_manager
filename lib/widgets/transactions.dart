@@ -3,6 +3,7 @@ import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
+import 'package:flutter_money_manager/utils/widget_util.dart';
 
 import 'color_circle.dart';
 
@@ -72,8 +73,8 @@ class Report extends StatelessWidget {
       }
     }
 
-    transactions.removeWhere(
-            (t) => key == shortDateFormat(getDateWithoutTime(t.date)));
+    transactions
+        .removeWhere((t) => key == shortDateFormat(getDateWithoutTime(t.date)));
 
     return _convertListOfMyTransactionToListItem(transactions, list);
   }
@@ -86,12 +87,16 @@ class Report extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(child: Text(snapshot.error.toString()));
         } else if (snapshot.hasData) {
-          return _buildTransactionWidgets(
-            _convertListOfMyTransactionToListItem(
-              snapshot.data,
-              List<ListItem>(),
-            ),
-          );
+          if (snapshot.data.length > 0) {
+            return _buildTransactionWidgets(
+              _convertListOfMyTransactionToListItem(
+                snapshot.data,
+                List<ListItem>(),
+              ),
+            );
+          } else {
+            return buildListInitialGuideWidget('transaction');
+          }
         } else {
           return new CircularProgressIndicator();
         }

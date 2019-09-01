@@ -113,6 +113,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                 ),
+                autofocus: true,
                 validator: (value) {
                   if (value
                       .trim()

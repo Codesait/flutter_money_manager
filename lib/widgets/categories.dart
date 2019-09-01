@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/category.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
+import 'package:flutter_money_manager/utils/widget_util.dart';
 
 import 'color_circle.dart';
 
@@ -43,7 +45,11 @@ class Categories extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else if (snapshot.hasData) {
-            return _buildCategoryWidgets(snapshot.data);
+            if (snapshot.data.length > 0) {
+              return _buildCategoryWidgets(snapshot.data);
+            } else {
+              return buildListInitialGuideWidget('category');
+            }
           } else {
             return Center(child: new CircularProgressIndicator());
           }

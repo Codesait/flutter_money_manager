@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
               ListTile(
                 selected: nav.currentNav == NavigationItem.REPORT,
                 leading: Icon(Icons.assignment),
-                title: Text('Report'),
+                title: Text('Transactions'),
                 onTap: () {
                   Navigator.of(context).pop();
                   nav.changeNavigation(NavigationItem.REPORT);
