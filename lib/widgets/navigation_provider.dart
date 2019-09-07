@@ -11,7 +11,7 @@ class NavigationProvider with ChangeNotifier {
 
   Widget get getNav {
     switch (currentNav) {
-      case NavigationItem.REPORT:
+      case NavigationItem.TRANSACTIONS:
         return Report();
       case NavigationItem.CATEGORIES:
         return Categories(
@@ -29,7 +29,7 @@ class NavigationProvider with ChangeNotifier {
 
   Widget getAppBarTitle() {
     switch (currentNav) {
-      case NavigationItem.REPORT:
+      case NavigationItem.TRANSACTIONS:
         return Text('Transactions');
       case NavigationItem.CATEGORIES:
         return Text('Categories');
@@ -56,4 +56,4 @@ class NavigationProvider with ChangeNotifier {
   }
 }
 
-enum NavigationItem { HOME, REPORT, CATEGORIES, SETTINGS }
+enum NavigationItem { HOME, TRANSACTIONS, CATEGORIES, SETTINGS }

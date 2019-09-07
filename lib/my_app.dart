@@ -29,12 +29,12 @@ class MyApp extends StatelessWidget {
                 },
               ),
               ListTile(
-                selected: nav.currentNav == NavigationItem.REPORT,
+                selected: nav.currentNav == NavigationItem.TRANSACTIONS,
                 leading: Icon(Icons.assignment),
                 title: Text('Transactions'),
                 onTap: () {
                   Navigator.of(context).pop();
-                  nav.changeNavigation(NavigationItem.REPORT);
+                  nav.changeNavigation(NavigationItem.TRANSACTIONS);
                 },
               ),
               ListTile(

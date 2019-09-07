@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
+import 'package:flutter_money_manager/transaction_type.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/utils/widget_util.dart';
@@ -16,15 +17,24 @@ class Report extends StatelessWidget {
           return Column(
             children: <Widget>[
               index == 0 ? SizedBox(height: 4.0) : Divider(),
-              Container(
-                alignment: Alignment.centerLeft,
+              Padding(
                 padding: const EdgeInsets.only(
                   left: 16.0,
                   top: 8.0,
                   right: 16.0,
                   bottom: 8.0,
                 ),
-                child: Text(item.heading),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(child: Text(item.heading)),
+                    Text(
+                      standardNumberFormat(item.balance),
+                      style: TextStyle(
+                        color: item.balance < 0 ? Colors.red : Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Divider(),
             ],
@@ -48,7 +58,13 @@ class Report extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
-            trailing: Text(standardTimeFormat(item.transaction.date)),
+            trailing: Text(
+              standardTimeFormat(item.transaction.date),
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .caption,
+            ),
           );
         }
       },
@@ -63,16 +79,31 @@ class Report extends StatelessWidget {
       return list;
     }
 
+    List<ListItem> tempList = [];
+
     String key = shortDateFormat(getDateWithoutTime(transactions[0].date));
 
-    list.add(HeadingItem(heading: key));
-
+    double balance = 0;
     for (MyTransaction t in transactions) {
       if (key == shortDateFormat(getDateWithoutTime(t.date))) {
-        list.add(TransactionItem(transaction: t));
+        tempList.add(TransactionItem(transaction: t));
+
+        if (t.category.transactionType == TransactionType.INCOME) {
+          balance += t.amount;
+        } else {
+          balance -= t.amount;
+        }
       }
     }
 
+    list.add(HeadingItem(
+      heading: key,
+      balance: balance,
+    ));
+
+    list.addAll(tempList);
+
+    // Remove transactions those are already added in tempList
     transactions
         .removeWhere((t) => key == shortDateFormat(getDateWithoutTime(t.date)));
 
@@ -111,10 +142,14 @@ abstract class ListItem {}
 // A ListItem that contains data to display a heading.
 class HeadingItem implements ListItem {
   final String heading;
+  final double balance;
 
   HeadingItem({
     @required this.heading,
-  }) : assert(heading != null);
+    @required this.balance,
+  })
+      : assert(heading != null),
+        assert(balance != null);
 }
 
 // A ListItem that contains data to display a message.
