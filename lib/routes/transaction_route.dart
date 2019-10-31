@@ -62,7 +62,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
               ),
               child: Categories(
                 shrinkWrap: true,
-                onTap: (category) {
+                onTap: (context, category) {
                   setState(() {
                     _transaction.category = category;
                   });

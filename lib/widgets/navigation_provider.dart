@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/fabs/fabs.dart';
+import 'package:flutter_money_manager/routes/category_route.dart';
 import 'package:flutter_money_manager/widgets/categories.dart';
 import 'package:flutter_money_manager/widgets/home.dart';
 import 'package:flutter_money_manager/widgets/settings.dart';
@@ -15,9 +16,11 @@ class NavigationProvider with ChangeNotifier {
         return Report();
       case NavigationItem.CATEGORIES:
         return Categories(
-          onTap: (category) {
-            // TODO : go to category detail page
-            print(category.toString());
+          onTap: (context, category) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CategoryRoute(category: category)));
           },
         );
       case NavigationItem.SETTINGS:
@@ -36,7 +39,7 @@ class NavigationProvider with ChangeNotifier {
       case NavigationItem.SETTINGS:
         return Text('Settings');
       default:
-      // Do not show title in Home.
+        // Do not show title in Home.
         return Text('');
     }
   }

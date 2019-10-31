@@ -7,7 +7,7 @@ import 'package:flutter_money_manager/utils/widget_util.dart';
 import 'color_circle.dart';
 
 class Categories extends StatelessWidget {
-  final ValueChanged<Category> onTap;
+  final onTap; // use as function
   final bool shrinkWrap;
 
   Categories({
@@ -23,7 +23,7 @@ class Categories extends StatelessWidget {
       shrinkWrap: shrinkWrap,
       itemBuilder: (context, index) {
         return ListTile(
-          onTap: () => onTap(categories[index]),
+          onTap: () => onTap(context, categories[index]),
           leading: ColorCircle(color: categories[index].color),
           title: Text(
             categories[index].name,

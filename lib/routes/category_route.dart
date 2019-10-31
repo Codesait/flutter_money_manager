@@ -7,8 +7,15 @@ import 'package:flutter_money_manager/tiles/color_tile.dart';
 import '../transaction_type.dart';
 
 class CategoryRoute extends StatefulWidget {
+  final Category category;
+
+  const CategoryRoute({
+    Key key,
+    this.category,
+  }) : super(key: key);
+
   @override
-  _CategoryRouteState createState() => _CategoryRouteState();
+  _CategoryRouteState createState() => _CategoryRouteState(category);
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
@@ -21,11 +28,10 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
-  final _nameController = TextEditingController();
-  final _category = Category(
-    color: Colors.lime,
-    transactionType: TransactionType.EXPENSE,
-  );
+  TextEditingController _nameController;
+  Category _category;
+
+  _CategoryRouteState(this._category);
 
   void _onRadioChanged(int value) {
     setState(() {
@@ -65,6 +71,22 @@ class _CategoryRouteState extends State<CategoryRoute> {
       },
       itemCount: myConst.colors.length,
     );
+  }
+
+  @override
+  void initState() {
+    _nameController = TextEditingController();
+
+    if (_category == null) {
+      _category = Category(
+        color: Colors.lime,
+        transactionType: TransactionType.EXPENSE,
+      );
+    } else {
+      _nameController.text = _category.name;
+    }
+
+    super.initState();
   }
 
   @override
@@ -115,9 +137,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
                 ),
                 autofocus: true,
                 validator: (value) {
-                  if (value
-                      .trim()
-                      .isEmpty) {
+                  if (value.trim().isEmpty) {
                     _nameController.text = '';
                     return 'Enter Category Name!';
                   }
@@ -161,9 +181,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
         body: body,
       ),
       data: Theme.of(context).copyWith(
-        canvasColor: Theme
-            .of(context)
-            .primaryColor,
+        canvasColor: Theme.of(context).primaryColor,
         accentColor: _category.color,
         cursorColor: _category.color,
         toggleableActiveColor: _category.color,
