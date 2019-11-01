@@ -72,4 +72,11 @@ class TransactionTable {
       return Total.fromMap(maps[index]);
     });
   }
+
+  Future<int> delete(int transactionId) async {
+    // Get a reference to the database.
+    final Database db = await DatabaseHelper().db;
+
+    return db.delete(tableName, where: id + '=?', whereArgs: [transactionId]);
+  }
 }
