@@ -28,7 +28,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
-  TextEditingController _nameController;
+  final TextEditingController _nameController = TextEditingController();
   Category _category;
 
   _CategoryRouteState(this._category);
@@ -75,8 +75,6 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
   @override
   void initState() {
-    _nameController = TextEditingController();
-
     if (_category == null) {
       _category = Category(
         color: Colors.lime,

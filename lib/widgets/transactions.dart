@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
+import 'package:flutter_money_manager/routes/transaction_route.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/transaction_type.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
@@ -45,7 +46,13 @@ class Report extends StatelessWidget {
               ? ''
               : '- ${item.transaction.description}';
           return ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          TransactionRoute(transaction: item.transaction)));
+            },
             leading: ColorCircle(color: item.transaction.category.color),
             title: Text(
               standardNumberFormat(item.transaction.amount) +
@@ -60,10 +67,7 @@ class Report extends StatelessWidget {
             ),
             trailing: Text(
               standardTimeFormat(item.transaction.date),
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .caption,
+              style: Theme.of(context).textTheme.caption,
             ),
           );
         }
@@ -73,8 +77,9 @@ class Report extends StatelessWidget {
   }
 
   List<ListItem> _convertListOfMyTransactionToListItem(
-      List<MyTransaction> transactions,
-      List<ListItem> list,) {
+    List<MyTransaction> transactions,
+    List<ListItem> list,
+  ) {
     if (transactions.length == 0) {
       return list;
     }
@@ -147,8 +152,7 @@ class HeadingItem implements ListItem {
   HeadingItem({
     @required this.heading,
     @required this.balance,
-  })
-      : assert(heading != null),
+  })  : assert(heading != null),
         assert(balance != null);
 }
 
