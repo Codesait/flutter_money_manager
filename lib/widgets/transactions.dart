@@ -9,7 +9,26 @@ import 'package:flutter_money_manager/utils/widget_util.dart';
 
 import 'color_circle.dart';
 
-class Report extends StatelessWidget {
+class Report extends StatefulWidget {
+  @override
+  _ReportState createState() => _ReportState();
+}
+
+class _ReportState extends State<Report> {
+  Future<bool> deleteTransaction(
+      BuildContext context, MyTransaction transaction) async {
+    try {
+      int result = await TransactionTable().delete(transaction.id);
+
+      return result > 0;
+    } catch (exception) {
+      print(
+          '_buildTransactionWidgets() : Fail to delete transaction! $exception');
+
+      return false;
+    }
+  }
+
   Widget _buildTransactionWidgets(List<ListItem> items) {
     return ListView.builder(
       itemBuilder: (context, index) {
@@ -45,29 +64,70 @@ class Report extends StatelessWidget {
           String description = item.transaction.description == null
               ? ''
               : '- ${item.transaction.description}';
-          return ListTile(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          TransactionRoute(transaction: item.transaction)));
+          return Dismissible(
+            // Each Dismissible must contain a Key. Keys allow Flutter to
+            // uniquely identify widgets.
+            key: Key(item.transaction.id.toString()),
+            onDismissed: (direction) async {
+              bool result = await deleteTransaction(context, item.transaction);
+              if (!result) {
+                // Need to refresh UI, cause dismissible always remove item
+                // form UI when call 'onDismissed'
+                setState(() {});
+
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text("Fail to delete.")));
+                return;
+              }
+
+              setState(() {
+                items.removeAt(index);
+              });
+
+              // TODO : add 'Undo' function
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Deleted a transaction successfully.")));
             },
-            leading: ColorCircle(color: item.transaction.category.color),
-            title: Text(
-              standardNumberFormat(item.transaction.amount) +
-                  ' - ${item.transaction.category.transactionType.name}',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+            // Show a red background as the item is swiped away.
+            background: Container(
+              color: Colors.red,
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Icon(Icons.delete),
+                  Icon(Icons.delete),
+                ],
+              ),
             ),
-            subtitle: Text(
-              '${item.transaction.category.name} $description',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-            trailing: Text(
-              standardTimeFormat(item.transaction.date),
-              style: Theme.of(context).textTheme.caption,
+            child: ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            TransactionRoute(transaction: item.transaction)));
+              },
+              leading: ColorCircle(color: item.transaction.category.color),
+              title: Text(
+                standardNumberFormat(item.transaction.amount) +
+                    ' - ${item.transaction.category.transactionType.name}',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              subtitle: Text(
+                '${item.transaction.category.name} $description',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+              trailing: Text(
+                standardTimeFormat(item.transaction.date),
+                style: Theme.of(context).textTheme.caption,
+              ),
             ),
           );
         }
