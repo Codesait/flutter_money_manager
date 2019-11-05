@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/utils/date_format_util.dart';
+import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/widgets/categories.dart';
 
 class TransactionRoute extends StatefulWidget {
@@ -92,9 +93,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
 
     if (_formKey.currentState.validate()) {
       _transaction.amount = double.parse(_amountController.text);
-      if (_descriptionController.text.trim().isNotEmpty) {
-        _transaction.description = _descriptionController.text;
-      }
+      _transaction.description = _descriptionController.text;
 
       try {
         await TransactionTable().insert(_transaction);
@@ -111,7 +110,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
     if (_transaction == null) {
       _transaction = MyTransaction(date: DateTime.now());
     } else {
-      _amountController.text = _transaction.amount.toString();
+      _amountController.text = excludeZeroDecimal(_transaction.amount);
       _descriptionController.text = _transaction.description;
     }
 
