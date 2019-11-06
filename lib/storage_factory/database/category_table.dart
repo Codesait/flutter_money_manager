@@ -47,4 +47,11 @@ class CategoryTable {
       return Category.fromMap(maps[i]);
     });
   }
+  
+  Future<int> delete(int categoryId) async {
+    // Get a reference to the database.
+    final Database db = await DatabaseHelper().db;
+
+    return db.delete(tableName, where: id + '=?', whereArgs: [categoryId]);
+  }
 }

@@ -79,4 +79,16 @@ class TransactionTable {
 
     return db.delete(tableName, where: id + '=?', whereArgs: [transactionId]);
   }
+
+  Future<bool> isCategoryExist(String categoryId) async {
+    // Get a reference to the database.
+    final Database db = await DatabaseHelper().db;
+
+    final List<Map<String, dynamic>> map = await db.rawQuery('select $category'
+        ' from $tableName'
+        ' where $category="$categoryId"'
+        ' limit 1');
+
+    return map.length > 0;
+  }
 }
