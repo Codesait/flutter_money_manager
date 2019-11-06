@@ -15,18 +15,51 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
-  Future<bool> deleteTransaction(
+  Future<void> deleteTransaction(
       BuildContext context, MyTransaction transaction) async {
-    try {
-      int result = await TransactionTable().delete(transaction.id);
-
-      return result > 0;
-    } catch (exception) {
-      print(
-          '_buildTransactionWidgets() : Fail to delete transaction! $exception');
+    int result = await TransactionTable().delete(transaction.id);
+    if (result <= 0) {
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text('Fail to delete.')));
 
       return false;
     }
+
+    setState(() {});
+
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text('Deleted successfully.')));
+  }
+
+  void _showOptionsModalBottomSheet(
+      BuildContext context, MyTransaction transaction) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Wrap(
+            children: <Widget>[
+              new ListTile(
+                  leading: new Icon(Icons.edit),
+                  title: new Text('Edit'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                TransactionRoute(transaction: transaction)));
+                  }),
+              new ListTile(
+                leading: new Icon(Icons.delete),
+                title: new Text('Delete'),
+                onTap: () {
+                  Navigator.pop(context);
+                  deleteTransaction(context, transaction);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   Widget _buildTransactionWidgets(List<ListItem> items) {
@@ -64,70 +97,31 @@ class _ReportState extends State<Report> {
           String description = item.transaction.description == null
               ? ''
               : '- ${item.transaction.description}';
-          return Dismissible(
-            // Each Dismissible must contain a Key. Keys allow Flutter to
-            // uniquely identify widgets.
-            key: Key(item.transaction.id.toString()),
-            onDismissed: (direction) async {
-              bool result = await deleteTransaction(context, item.transaction);
-              if (!result) {
-                // Need to refresh UI, cause dismissible always remove item
-                // form UI when call 'onDismissed'
-                setState(() {});
-
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text("Fail to delete.")));
-                return;
-              }
-
-              setState(() {
-                items.removeAt(index);
-              });
-
-              // TODO : add 'Undo' function
-              Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Deleted a transaction successfully.")));
+          return ListTile(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          TransactionRoute(transaction: item.transaction)));
             },
-            // Show a red background as the item is swiped away.
-            background: Container(
-              color: Colors.red,
-              padding: EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Icon(Icons.delete),
-                  Icon(Icons.delete),
-                ],
-              ),
+            onLongPress: () =>
+                _showOptionsModalBottomSheet(context, item.transaction),
+            leading: ColorCircle(color: item.transaction.category.color),
+            title: Text(
+              standardNumberFormat(item.transaction.amount) +
+                  ' - ${item.transaction.category.transactionType.name}',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
-            child: ListTile(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            TransactionRoute(transaction: item.transaction)));
-              },
-              leading: ColorCircle(color: item.transaction.category.color),
-              title: Text(
-                standardNumberFormat(item.transaction.amount) +
-                    ' - ${item.transaction.category.transactionType.name}',
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              subtitle: Text(
-                '${item.transaction.category.name} $description',
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-              trailing: Text(
-                standardTimeFormat(item.transaction.date),
-                style: Theme.of(context).textTheme.caption,
-              ),
+            subtitle: Text(
+              '${item.transaction.category.name} $description',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+            trailing: Text(
+              standardTimeFormat(item.transaction.date),
+              style: Theme.of(context).textTheme.caption,
             ),
           );
         }
