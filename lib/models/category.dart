@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
+import 'package:flutter_money_manager/utils/color_util.dart';
 
 import '../transaction_type.dart';
 
@@ -13,7 +14,7 @@ class Category {
 
   Category.fromMap(Map<String, dynamic> map) {
     id = map[CategoryTable().id];
-    color = Color(map[CategoryTable().color]);
+    color = valueToColor(map[CategoryTable().color]);
     name = map[CategoryTable().name];
     transactionType = TransactionType.valueOf(map[CategoryTable().type]);
   }
