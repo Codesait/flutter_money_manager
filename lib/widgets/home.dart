@@ -94,6 +94,7 @@ class Home extends StatelessWidget {
             // TODO : go to report with "INCOME" filter
           },
           iconData: Icons.trending_up,
+          color: Colors.green,
           amount: incomeTotal != null ? incomeTotal.amount : 0,
           label: 'Total Income',
         ),
@@ -103,6 +104,7 @@ class Home extends StatelessWidget {
             // TODO : go to report with "EXPENSE" filter
           },
           iconData: Icons.trending_down,
+          color: Colors.red,
           amount: expenseTotal != null ? expenseTotal.amount : 0,
           label: 'Total Expense',
         ),

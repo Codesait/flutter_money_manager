@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 class SummaryTile extends StatelessWidget {
   final GestureTapCallback onTap;
   final IconData iconData;
+  final Color color;
   final double amount;
   final String label;
 
@@ -12,10 +13,12 @@ class SummaryTile extends StatelessWidget {
     Key key,
     @required this.onTap,
     @required this.iconData,
+    @required this.color,
     @required this.amount,
     @required this.label,
   })  : assert(onTap != null),
         assert(iconData != null),
+        assert(color != null),
         assert(amount != null),
         assert(label != null),
         super(key: key);
@@ -27,8 +30,11 @@ class SummaryTile extends StatelessWidget {
       leading: Padding(
         padding: const EdgeInsets.only(right: 16.0),
         child: CircleAvatar(
-          backgroundColor: Colors.white70,
-          child: Icon(iconData),
+          backgroundColor: color,
+          child: Icon(
+            iconData,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
       ),
       title: Text(standardNumberFormat(amount)),
