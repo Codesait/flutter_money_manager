@@ -94,7 +94,8 @@ class _ReportState extends State<Report> {
           );
         } else {
           TransactionItem item = items[index];
-          String description = item.transaction.description == null
+          String description = (item.transaction.description == null ||
+                  item.transaction.description.trim().isEmpty)
               ? ''
               : '- ${item.transaction.description}';
           return ListTile(
