@@ -25,6 +25,8 @@ class _TransactionRouteState extends State<TransactionRoute> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final _amountController = TextEditingController();
@@ -34,7 +36,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
 
   _TransactionRouteState(this._transaction);
 
-  Future<void> _showDatePicker(BuildContext context) async {
+  Future<void> _showDateTimePicker(BuildContext context) async {
     DateTime dateTime = await showDatePicker(
       context: context,
       initialDate: _transaction.date,
@@ -104,11 +106,11 @@ class _TransactionRouteState extends State<TransactionRoute> {
     );
   }
 
-  Future<void> _saveTransaction() async {
+  Future<void> _saveTransaction(BuildContext context) async {
     // Checking frontend validation.
     if (_transaction.category == null) {
-      // TODO : give feedback to user to choose category
-      print('_saveTransaction() : Please choose category!');
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text('Please choose category!')));
       return;
     }
 
@@ -120,8 +122,9 @@ class _TransactionRouteState extends State<TransactionRoute> {
         await TransactionTable().insert(_transaction);
         Navigator.pop(context);
       } catch (exception) {
-        // TODO : give feedback to user
         print('_saveCategory() : Fail to save transaction! $exception');
+        _scaffoldKey.currentState
+            .showSnackBar(SnackBar(content: Text('Fail to save transaction!')));
       }
     }
   }
@@ -153,7 +156,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.check),
-          onPressed: () => _saveTransaction(),
+          onPressed: () => _saveTransaction(context),
         ),
       ],
     );
@@ -166,7 +169,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
           child: Column(
             children: <Widget>[
               ListTile(
-                onTap: () => _showDatePicker(context),
+                onTap: () => _showDateTimePicker(context),
                 leading: Icon(Icons.date_range),
                 title: Text(standardDateFormat(_transaction.date)),
               ),
@@ -229,6 +232,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
     );
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: appBar,
       body: body,
     );
