@@ -34,7 +34,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
 
   _TransactionRouteState(this._transaction);
 
-  Future _showDatePicker(BuildContext context) async {
+  Future<void> _showDatePicker(BuildContext context) async {
     DateTime dateTime = await showDatePicker(
       context: context,
       initialDate: _transaction.date,
@@ -42,16 +42,37 @@ class _TransactionRouteState extends State<TransactionRoute> {
       lastDate: DateTime(3000),
     );
 
+    if (dateTime == null) {
+      return;
+    }
+
+    TimeOfDay selectedTime = await showTimePicker(
+      initialTime: TimeOfDay(
+        hour: _transaction.date.hour,
+        minute: _transaction.date.minute,
+      ),
+      context: context,
+    );
+
     if (dateTime != null && dateTime != _transaction.date) {
-      DateTime now = DateTime.now();
+      int hour;
+      int minute;
+
+      if (selectedTime != null) {
+        hour = selectedTime.hour;
+        minute = selectedTime.minute;
+      } else {
+        hour = DateTime.now().hour;
+        minute = DateTime.now().minute;
+      }
+
       setState(() {
         _transaction.date = DateTime(
           dateTime.year,
           dateTime.month,
           dateTime.day,
-          now.hour,
-          now.minute,
-          now.second,
+          hour,
+          minute,
         );
       });
     }
