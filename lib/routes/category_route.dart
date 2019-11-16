@@ -26,6 +26,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final TextEditingController _nameController = TextEditingController();
@@ -39,7 +41,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
     });
   }
 
-  Future<void> _saveCategory() async {
+  Future<void> _saveCategory(BuildContext context) async {
     // Checking frontend validation.
     if (_formKey.currentState.validate()) {
       _category.name = _nameController.text;
@@ -48,8 +50,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
         await CategoryTable().insert(_category);
         Navigator.pop(context);
       } catch (exception) {
-        // TODO : give feedback to user
         print('_saveCategory() : Fail to save category! $exception');
+        _scaffoldKey.currentState
+            .showSnackBar(SnackBar(content: Text('Fail to save category!')));
       }
     }
   }
@@ -100,7 +103,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
       title: Text('Category'),
       centerTitle: true,
       actions: <Widget>[
-        IconButton(icon: Icon(Icons.check), onPressed: () => _saveCategory()),
+        IconButton(
+            icon: Icon(Icons.check), onPressed: () => _saveCategory(context)),
       ],
     );
 
@@ -175,6 +179,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
     return Theme(
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: appBar,
         body: body,
       ),
