@@ -56,7 +56,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
       context: context,
     );
 
-    if (dateTime != null && dateTime != _transaction.date) {
+    if (dateTime != null) {
       int hour;
       int minute;
 
