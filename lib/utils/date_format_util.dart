@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String standardDateFormat(DateTime date) {
-  return DateFormat('EEE, MMM yyyy h:mm:ss a').format(date);
+  return DateFormat('MM/dd/yyyy h:mm a').format(date);
 }
 
 String standardTimeFormat(DateTime date) {

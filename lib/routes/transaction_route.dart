@@ -64,8 +64,8 @@ class _TransactionRouteState extends State<TransactionRoute> {
         hour = selectedTime.hour;
         minute = selectedTime.minute;
       } else {
-        hour = DateTime.now().hour;
-        minute = DateTime.now().minute;
+        hour = _transaction.date.hour;
+        minute = _transaction.date.minute;
       }
 
       setState(() {
