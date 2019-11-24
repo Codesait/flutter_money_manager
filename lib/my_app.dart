@@ -19,6 +19,20 @@ class MyApp extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                  left: 16.0,
+                  top: 16.0,
+                  right: 16.0,
+                  bottom: 8.0,
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Money Manager',
+                  style: Theme.of(context).textTheme.title,
+                ),
+              ),
+              Divider(),
               ListTile(
                 selected: nav.currentNav == NavigationItem.HOME,
                 leading: Icon(Icons.home),
