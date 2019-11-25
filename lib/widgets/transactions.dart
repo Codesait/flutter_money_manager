@@ -96,8 +96,13 @@ class _ReportState extends State<Report> {
           TransactionItem item = items[index];
           String description = (item.transaction.description == null ||
                   item.transaction.description.trim().isEmpty)
-              ? ''
-              : '- ${item.transaction.description}';
+              ? 'No Description'
+              : item.transaction.description;
+          double amount = item.transaction.amount;
+          if (item.transaction.category.transactionType ==
+              TransactionType.EXPENSE) {
+            amount *= -1;
+          }
           return ListTile(
             onTap: () {
               Navigator.push(
@@ -110,18 +115,17 @@ class _ReportState extends State<Report> {
                 _showOptionsModalBottomSheet(context, item.transaction),
             leading: ColorCircle(color: item.transaction.category.color),
             title: Text(
-              standardNumberFormat(item.transaction.amount) +
-                  ' - ${item.transaction.category.transactionType.name}',
+              item.transaction.category.name,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
             subtitle: Text(
-              '${item.transaction.category.name} $description',
+              description,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
             trailing: Text(
-              standardTimeFormat(item.transaction.date),
+              standardNumberFormat(amount),
               style: Theme.of(context).textTheme.caption,
             ),
           );
