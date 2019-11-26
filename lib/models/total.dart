@@ -1,8 +1,7 @@
+import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:meta/meta.dart';
-
-import '../transaction_type.dart';
 
 class Total {
   TransactionType type;

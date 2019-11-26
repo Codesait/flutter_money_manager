@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/consts.dart' as myConst;
+import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/category.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:flutter_money_manager/tiles/color_tile.dart';
-
-import '../transaction_type.dart';
 
 class CategoryRoute extends StatefulWidget {
   final Category category;

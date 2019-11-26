@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/total.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/tiles/summary_tile.dart';
-import 'package:flutter_money_manager/transaction_type.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
 
 class Home extends StatelessWidget {
