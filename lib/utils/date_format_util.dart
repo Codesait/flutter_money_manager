@@ -11,3 +11,7 @@ String shortDateFormat(DateTime date) {
 DateTime getDateWithoutTime(DateTime date) {
   return new DateTime(date.year, date.month, date.day);
 }
+
+String convertToISO8601DateFormat(DateTime date) {
+  return DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(date);
+}

@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'database_helper.dart';
 
 class TransactionTable {
-  final tableName = 'transactoin_table';
+  final tableName = 'transaction_table';
   final id = 'transaction_id';
   final date = 'transaction_date';
   final amount = 'transaction_amount';
@@ -16,7 +16,7 @@ class TransactionTable {
   void onCreate(Database db, int version) {
     db.execute('CREATE TABLE $tableName('
         '$id INTEGER PRIMARY KEY AUTOINCREMENT,'
-        '$date INTEGER,'
+        '$date TEXT,'
         '$amount REAL,'
         '$description TEXT,'
         '$category INTEGER)');
