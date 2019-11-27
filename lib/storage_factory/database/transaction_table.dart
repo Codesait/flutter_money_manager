@@ -1,3 +1,4 @@
+import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
 import 'package:flutter_money_manager/models/total.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
@@ -90,5 +91,33 @@ class TransactionTable {
         ' limit 1');
 
     return map.length > 0;
+  }
+
+  Future<List<MyTransaction>> getAllByFilter(
+      TransactionFilterType filterType) async {
+    // Get a reference to the database.
+    final Database db = await DatabaseHelper().db;
+
+    final String filter =
+        filterType == TransactionFilterType.MONTHLY ? '%Y-%m' : '%Y';
+
+    String rawQuery = 'SELECT $date,'
+        ' SUM($amount) $amount,'
+        ' ${CategoryTable().id},'
+        ' ${CategoryTable().color},'
+        ' ${CategoryTable().name},'
+        ' ${CategoryTable().type}'
+        ' FROM $tableName'
+        ' LEFT JOIN ${CategoryTable().tableName}'
+        ' ON $category=${CategoryTable().id}'
+        ' GROUP BY STRFTIME(\'$filter\', $date),'
+        ' $category';
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
+
+    // Convert the List<Map<String, dynamic> into a List<MyTransaction>.
+    return List.generate(maps.length, (i) {
+      return MyTransaction.fromMap(maps[i]);
+    });
   }
 }
