@@ -39,23 +39,6 @@ class TransactionTable {
     );
   }
 
-  Future<List<MyTransaction>> getAll() async {
-    // Get a reference to the database.
-    final Database db = await DatabaseHelper().db;
-
-    // Query the table for all the records.
-    String rawQuery = 'SELECT * FROM $tableName'
-        ' LEFT JOIN ${CategoryTable().tableName}'
-        ' ON $category=${CategoryTable().id}'
-        ' ORDER BY $date DESC';
-    final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
-
-    // Convert the List<Map<String, dynamic> into a List<MyTransaction>.
-    return List.generate(maps.length, (i) {
-      return MyTransaction.fromMap(maps[i]);
-    });
-  }
-
   Future<List<Total>> getTotals() async {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
@@ -94,15 +77,33 @@ class TransactionTable {
   }
 
   Future<List<MyTransaction>> getAllByFilter(
-      TransactionFilterType filterType) async {
+      TransactionFilterType transactionFilterType) async {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
-    final String filter =
-        filterType == TransactionFilterType.MONTHLY ? '%Y-%m' : '%Y';
+    String filter;
+    switch (transactionFilterType) {
+      case TransactionFilterType.DAILY:
+        {
+          filter = '%Y-%m-%d';
+          break;
+        }
+      case TransactionFilterType.MONTHLY:
+        {
+          filter = '%Y-%m';
+          break;
+        }
+      case TransactionFilterType.YEARLY:
+        {
+          filter = '%Y';
+          break;
+        }
+    }
 
-    String rawQuery = 'SELECT $date,'
+    String rawQuery = 'SELECT $id,'
+        ' $date,'
         ' SUM($amount) $amount,'
+        ' $description,'
         ' ${CategoryTable().id},'
         ' ${CategoryTable().color},'
         ' ${CategoryTable().name},'
@@ -111,7 +112,8 @@ class TransactionTable {
         ' LEFT JOIN ${CategoryTable().tableName}'
         ' ON $category=${CategoryTable().id}'
         ' GROUP BY STRFTIME(\'$filter\', $date),'
-        ' $category';
+        ' $category'
+        ' ORDER BY STRFTIME(\'$filter\', $date)';
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
 import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/routes/transaction_route.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_money_manager/storage_factory/database/transaction_table
 import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/utils/widget_util.dart';
+import 'package:flutter_money_manager/widgets/custom_tabbar.dart';
 
 import 'color_circle.dart';
 
@@ -15,6 +17,8 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
+  TransactionFilterType transactionFilterType = TransactionFilterType.DAILY;
+
   Future<void> deleteTransaction(
       BuildContext context, MyTransaction transaction) async {
     int result = await TransactionTable().delete(transaction.id);
@@ -138,6 +142,7 @@ class _ReportState extends State<Report> {
   List<ListItem> _convertListOfMyTransactionToListItem(
     List<MyTransaction> transactions,
     List<ListItem> list,
+    TransactionFilterType transactionFilterType,
   ) {
     if (transactions.length == 0) {
       return list;
@@ -145,11 +150,14 @@ class _ReportState extends State<Report> {
 
     List<ListItem> tempList = [];
 
-    String key = shortDateFormat(getDateWithoutTime(transactions[0].date));
+    String key = getDateFormattedString(
+      transactionFilterType,
+      transactions[0].date,
+    );
 
     double balance = 0;
     for (MyTransaction t in transactions) {
-      if (key == shortDateFormat(getDateWithoutTime(t.date))) {
+      if (key == getDateFormattedString(transactionFilterType, t.date)) {
         tempList.add(TransactionItem(transaction: t));
 
         if (t.category.transactionType == TransactionType.INCOME) {
@@ -168,16 +176,51 @@ class _ReportState extends State<Report> {
     list.addAll(tempList);
 
     // Remove transactions those are already added in tempList
-    transactions
-        .removeWhere((t) => key == shortDateFormat(getDateWithoutTime(t.date)));
+    transactions.removeWhere(
+        (t) => key == getDateFormattedString(transactionFilterType, t.date));
 
-    return _convertListOfMyTransactionToListItem(transactions, list);
+    return _convertListOfMyTransactionToListItem(
+      transactions,
+      list,
+      transactionFilterType,
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  String getDateFormattedString(
+    TransactionFilterType transactionFilterType,
+    DateTime date,
+  ) {
+    switch (transactionFilterType) {
+      case TransactionFilterType.DAILY:
+        {
+          return shortDateFormat(getDateWithoutTime(date));
+        }
+      case TransactionFilterType.MONTHLY:
+        {
+          return shortDateFormatWithoutDay(getDateWithoutDayAndTime(date));
+        }
+      case TransactionFilterType.YEARLY:
+        {
+          return shortDateFormatWithoutMonthAndDay(
+              getDateWithoutMonthAndDayAndTime(date));
+        }
+      default:
+        {
+          throw UnsupportedError('$transactionFilterType is not supported!');
+        }
+    }
+  }
+
+  void _onTransactionFilterTypeChanged(
+      TransactionFilterType transactionFilterType) {
+    setState(() {
+      this.transactionFilterType = transactionFilterType;
+    });
+  }
+
+  Widget getList(TransactionFilterType transactionFilterType) {
     return FutureBuilder(
-      future: TransactionTable().getAll(),
+      future: TransactionTable().getAllByFilter(transactionFilterType),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
           return Center(child: Text(snapshot.error.toString()));
@@ -187,6 +230,7 @@ class _ReportState extends State<Report> {
               _convertListOfMyTransactionToListItem(
                 snapshot.data,
                 List<ListItem>(),
+                transactionFilterType,
               ),
             );
           } else {
@@ -196,6 +240,50 @@ class _ReportState extends State<Report> {
           return new CircularProgressIndicator();
         }
       },
+    );
+  }
+
+  Widget getTabbar(TransactionFilterType transactionFilterType) {
+    return CustomTabbar(
+      customTabbarItems: [
+        CustomTabbarItem(
+          onTap: () =>
+              _onTransactionFilterTypeChanged(TransactionFilterType.DAILY),
+          child: Text(
+            'Daily',
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        CustomTabbarItem(
+          onTap: () =>
+              _onTransactionFilterTypeChanged(TransactionFilterType.MONTHLY),
+          child: Text(
+            'Monthly',
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        CustomTabbarItem(
+          onTap: () =>
+              _onTransactionFilterTypeChanged(TransactionFilterType.YEARLY),
+          child: Text(
+            'Yearly',
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+      selectedIndex: transactionFilterType.index,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        getTabbar(transactionFilterType),
+        Expanded(
+          child: getList(transactionFilterType),
+        )
+      ],
     );
   }
 }
