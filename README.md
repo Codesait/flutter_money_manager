@@ -1,6 +1,7 @@
 # flutter_money_manager
 
 Flutter Money Manager
+- Track and manage your incomes and expenses.
 
 ## Getting Started
 
