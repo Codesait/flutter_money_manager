@@ -11,6 +11,165 @@ import 'package:flutter_money_manager/widgets/custom_tabbar.dart';
 
 import 'color_circle.dart';
 
+List<ListItem> _convertListOfMyTransactionToListItem(
+  List<MyTransaction> transactions,
+  List<ListItem> list,
+  TransactionFilterType transactionFilterType,
+) {
+  if (transactions.length == 0) {
+    return list;
+  }
+
+  List<ListItem> tempList = [];
+
+  String key = getDateFormattedString(
+    transactionFilterType,
+    transactions[0].date,
+  );
+
+  double balance = 0;
+  for (MyTransaction t in transactions) {
+    if (key == getDateFormattedString(transactionFilterType, t.date)) {
+      tempList.add(TransactionItem(transaction: t));
+
+      if (t.category.transactionType == TransactionType.INCOME) {
+        balance += t.amount;
+      } else {
+        balance -= t.amount;
+      }
+    }
+  }
+
+  list.add(HeadingItem(
+    heading: key,
+    balance: balance,
+  ));
+
+  list.addAll(tempList);
+
+  // Remove transactions those are already added in tempList
+  transactions.removeWhere(
+      (t) => key == getDateFormattedString(transactionFilterType, t.date));
+
+  return _convertListOfMyTransactionToListItem(
+    transactions,
+    list,
+    transactionFilterType,
+  );
+}
+
+String getDateFormattedString(
+  TransactionFilterType transactionFilterType,
+  DateTime date,
+) {
+  switch (transactionFilterType) {
+    case TransactionFilterType.DAILY:
+      {
+        return shortDateFormat(getDateWithoutTime(date));
+      }
+    case TransactionFilterType.MONTHLY:
+      {
+        return shortDateFormatWithoutDay(getDateWithoutDayAndTime(date));
+      }
+    case TransactionFilterType.YEARLY:
+      {
+        return shortDateFormatWithoutMonthAndDay(
+            getDateWithoutMonthAndDayAndTime(date));
+      }
+    default:
+      {
+        throw UnsupportedError('$transactionFilterType is not supported!');
+      }
+  }
+}
+
+typedef LoadingBuilderFn = Widget Function(BuildContext context);
+typedef ListItemBuilderFn = Widget Function(
+  BuildContext context,
+  List<ListItem> listItems,
+);
+typedef EmptyListItemBuilderFn = Widget Function(BuildContext context);
+typedef ErrorBuilderFn = Widget Function(BuildContext context, String error);
+
+class FutureListItemBuilder extends StatefulWidget {
+  final TransactionFilterType transactionFilterType;
+  final LoadingBuilderFn loadingBuilderFn;
+  final ListItemBuilderFn listItemBuilderFn;
+  final EmptyListItemBuilderFn emptyListItemBuilderFn;
+  final ErrorBuilderFn errorBuilderFn;
+
+  const FutureListItemBuilder(
+      {Key key,
+      @required this.transactionFilterType,
+      @required this.loadingBuilderFn,
+      @required this.listItemBuilderFn,
+      @required this.emptyListItemBuilderFn,
+      @required this.errorBuilderFn})
+      : assert(transactionFilterType != null),
+        assert(loadingBuilderFn != null),
+        assert(listItemBuilderFn != null),
+        assert(emptyListItemBuilderFn != null),
+        assert(errorBuilderFn != null),
+        super(key: key);
+
+  @override
+  _FutureListItemBuilderState createState() => _FutureListItemBuilderState();
+}
+
+class _FutureListItemBuilderState extends State<FutureListItemBuilder> {
+  bool _loading = true;
+  String _error;
+  List<ListItem> _listItems;
+
+  void _getAndSetTransactions() {
+    TransactionTable()
+        .getAllByFilter(widget.transactionFilterType)
+        .then((List<MyTransaction> myTransactions) {
+      setState(() {
+        _loading = false;
+        _listItems = _convertListOfMyTransactionToListItem(
+          myTransactions,
+          List<ListItem>(),
+          widget.transactionFilterType,
+        );
+      });
+    }).catchError((error) {
+      setState(() {
+        _loading = false;
+        _listItems = null;
+        this._error = error;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    _getAndSetTransactions();
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(FutureListItemBuilder oldWidget) {
+    if (oldWidget.transactionFilterType != widget.transactionFilterType) {
+      _getAndSetTransactions();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return widget.loadingBuilderFn(context);
+    } else if (_listItems != null && _listItems.isEmpty) {
+      return widget.emptyListItemBuilderFn(context);
+    } else if (_listItems != null && _listItems.isNotEmpty) {
+      return widget.listItemBuilderFn(context, _listItems);
+    } else {
+      return widget.errorBuilderFn(context, _error);
+    }
+  }
+}
+
 class Report extends StatefulWidget {
   @override
   _ReportState createState() => _ReportState();
@@ -146,108 +305,11 @@ class _ReportState extends State<Report> {
     );
   }
 
-  List<ListItem> _convertListOfMyTransactionToListItem(
-    List<MyTransaction> transactions,
-    List<ListItem> list,
-    TransactionFilterType transactionFilterType,
-  ) {
-    if (transactions.length == 0) {
-      return list;
-    }
-
-    List<ListItem> tempList = [];
-
-    String key = getDateFormattedString(
-      transactionFilterType,
-      transactions[0].date,
-    );
-
-    double balance = 0;
-    for (MyTransaction t in transactions) {
-      if (key == getDateFormattedString(transactionFilterType, t.date)) {
-        tempList.add(TransactionItem(transaction: t));
-
-        if (t.category.transactionType == TransactionType.INCOME) {
-          balance += t.amount;
-        } else {
-          balance -= t.amount;
-        }
-      }
-    }
-
-    list.add(HeadingItem(
-      heading: key,
-      balance: balance,
-    ));
-
-    list.addAll(tempList);
-
-    // Remove transactions those are already added in tempList
-    transactions.removeWhere(
-        (t) => key == getDateFormattedString(transactionFilterType, t.date));
-
-    return _convertListOfMyTransactionToListItem(
-      transactions,
-      list,
-      transactionFilterType,
-    );
-  }
-
-  String getDateFormattedString(
-    TransactionFilterType transactionFilterType,
-    DateTime date,
-  ) {
-    switch (transactionFilterType) {
-      case TransactionFilterType.DAILY:
-        {
-          return shortDateFormat(getDateWithoutTime(date));
-        }
-      case TransactionFilterType.MONTHLY:
-        {
-          return shortDateFormatWithoutDay(getDateWithoutDayAndTime(date));
-        }
-      case TransactionFilterType.YEARLY:
-        {
-          return shortDateFormatWithoutMonthAndDay(
-              getDateWithoutMonthAndDayAndTime(date));
-        }
-      default:
-        {
-          throw UnsupportedError('$transactionFilterType is not supported!');
-        }
-    }
-  }
-
   void _onTransactionFilterTypeChanged(
       TransactionFilterType transactionFilterType) {
     setState(() {
       this.transactionFilterType = transactionFilterType;
     });
-  }
-
-  Widget getList(TransactionFilterType transactionFilterType) {
-    return FutureBuilder(
-      future: TransactionTable().getAllByFilter(transactionFilterType),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text(snapshot.error.toString()));
-        } else if (snapshot.hasData) {
-          if (snapshot.data.length > 0) {
-            return _buildTransactionWidgets(
-              _convertListOfMyTransactionToListItem(
-                snapshot.data,
-                List<ListItem>(),
-                transactionFilterType,
-              ),
-            );
-          } else {
-            return buildListInitialGuideWidget('transaction');
-          }
-        } else {
-          return new CircularProgressIndicator();
-        }
-      },
-    );
   }
 
   Widget getTabbar(TransactionFilterType transactionFilterType) {
@@ -288,7 +350,26 @@ class _ReportState extends State<Report> {
       children: <Widget>[
         getTabbar(transactionFilterType),
         Expanded(
-          child: getList(transactionFilterType),
+          child: FutureListItemBuilder(
+            transactionFilterType: transactionFilterType,
+            loadingBuilderFn: (BuildContext context1) {
+              return CircularProgressIndicator();
+            },
+            listItemBuilderFn: (
+              BuildContext context2,
+              List<ListItem> listItems,
+            ) {
+              return _buildTransactionWidgets(listItems);
+            },
+            emptyListItemBuilderFn: (BuildContext context3) {
+              return buildListInitialGuideWidget('transaction');
+            },
+            errorBuilderFn: (BuildContext context4, String error) {
+              return Center(
+                child: Text(error),
+              );
+            },
+          ),
         )
       ],
     );
