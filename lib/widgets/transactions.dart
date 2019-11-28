@@ -67,6 +67,7 @@ class _ReportState extends State<Report> {
   }
 
   Widget _buildTransactionWidgets(List<ListItem> items) {
+    final isDaily = transactionFilterType == TransactionFilterType.DAILY;
     return ListView.builder(
       itemBuilder: (context, index) {
         if (items[index] is HeadingItem) {
@@ -108,26 +109,32 @@ class _ReportState extends State<Report> {
             amount *= -1;
           }
           return ListTile(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          TransactionRoute(transaction: item.transaction)));
-            },
-            onLongPress: () =>
-                _showOptionsModalBottomSheet(context, item.transaction),
+            onTap: () => isDaily
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TransactionRoute(
+                        transaction: item.transaction,
+                      ),
+                    ),
+                  )
+                : null,
+            onLongPress: () => isDaily
+                ? _showOptionsModalBottomSheet(context, item.transaction)
+                : null,
             leading: ColorCircle(color: item.transaction.category.color),
             title: Text(
               item.transaction.category.name,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
-            subtitle: Text(
-              description,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
+            subtitle: isDaily
+                ? Text(
+                    description,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  )
+                : null,
             trailing: Text(
               standardNumberFormat(amount),
               style: Theme.of(context).textTheme.caption,

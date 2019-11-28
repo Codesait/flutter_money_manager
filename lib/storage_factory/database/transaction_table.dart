@@ -113,7 +113,7 @@ class TransactionTable {
         ' ON $category=${CategoryTable().id}'
         ' GROUP BY STRFTIME(\'$filter\', $date),'
         ' $category'
-        ' ORDER BY STRFTIME(\'$filter\', $date)';
+        ' ORDER BY STRFTIME(\'$filter\', $date) DESC';
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
 
