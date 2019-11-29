@@ -150,9 +150,7 @@ class _FutureListItemBuilderState extends State<FutureListItemBuilder> {
 
   @override
   void didUpdateWidget(FutureListItemBuilder oldWidget) {
-    if (oldWidget.transactionFilterType != widget.transactionFilterType) {
-      _getAndSetTransactions();
-    }
+    _getAndSetTransactions();
     super.didUpdateWidget(oldWidget);
   }
 
