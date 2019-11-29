@@ -13,26 +13,17 @@ class CategoryTable {
   void onCreate(Database db, int version) {
     db.execute('CREATE TABLE $tableName('
         '$id INTEGER PRIMARY KEY AUTOINCREMENT,'
-        '$color INTEGER,'
-        '$name TEXT,'
-        '$type INTEGER)');
+        '$color INTEGER NOT NULL,'
+        '$name TEXT NOT NULL UNIQUE,'
+        '$type INTEGER NOT NULL)');
   }
 
   Future<int> insert(Category category) async {
-    // Checking backend validation.
-    category.checkValidationAndThrow();
-
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
-    // Insert the Category into the correct table. Also specify the
-    // 'conflictAlgorithm'. In this case, if the same category is inserted
-    // multiple times, it replaces the previous data.
-    return db.insert(
-      tableName,
-      category.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    // Insert the Category into the correct table.
+    return db.insert(tableName, category.toMap());
   }
 
   Future<List<Category>> getAll() async {
@@ -47,7 +38,7 @@ class CategoryTable {
       return Category.fromMap(maps[i]);
     });
   }
-  
+
   Future<int> delete(int categoryId) async {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
