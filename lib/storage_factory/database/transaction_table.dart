@@ -85,7 +85,7 @@ class TransactionTable {
     switch (transactionFilterType) {
       case TransactionFilterType.DAILY:
         {
-          filter = '%Y-%m-%d';
+          filter = '%Y-%m-%d %H:%M:%S.%s';
           break;
         }
       case TransactionFilterType.MONTHLY:
