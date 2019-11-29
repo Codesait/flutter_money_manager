@@ -223,83 +223,97 @@ class _ReportState extends State<Report> {
         });
   }
 
-  Widget _buildTransactionWidgets(List<ListItem> items) {
-    final isDaily = transactionFilterType == TransactionFilterType.DAILY;
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        if (items[index] is HeadingItem) {
-          HeadingItem item = items[index];
-          return Column(
+  Widget _headingItemBuilder(int index, HeadingItem item) {
+    return Column(
+      children: <Widget>[
+        index == 0 ? SizedBox(height: 4.0) : Divider(),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            top: 8.0,
+            right: 16.0,
+            bottom: 8.0,
+          ),
+          child: Row(
             children: <Widget>[
-              index == 0 ? SizedBox(height: 4.0) : Divider(),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  top: 8.0,
-                  right: 16.0,
-                  bottom: 8.0,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(child: Text(item.heading)),
-                    Text(
-                      standardNumberFormat(item.balance),
-                      style: TextStyle(
-                        color: item.balance < 0 ? Colors.red : Colors.green,
-                      ),
-                    ),
-                  ],
+              Expanded(child: Text(item.heading)),
+              Text(
+                standardNumberFormat(item.balance),
+                style: TextStyle(
+                  color: item.balance < 0 ? Colors.red : Colors.green,
                 ),
               ),
-              Divider(),
             ],
-          );
-        } else {
-          TransactionItem item = items[index];
-          String description = (item.transaction.description == null ||
-                  item.transaction.description.trim().isEmpty)
-              ? 'No Description'
-              : item.transaction.description;
-          double amount = item.transaction.amount;
-          if (item.transaction.category.transactionType ==
-              TransactionType.EXPENSE) {
-            amount *= -1;
-          }
-          return ListTile(
-            onTap: () => isDaily
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TransactionRoute(
-                        transaction: item.transaction,
-                      ),
-                    ),
-                  )
-                : null,
-            onLongPress: () => isDaily
-                ? _showOptionsModalBottomSheet(context, item.transaction)
-                : null,
-            leading: ColorCircle(color: item.transaction.category.color),
-            title: Text(
-              item.transaction.category.name,
+          ),
+        ),
+        Divider(),
+      ],
+    );
+  }
+
+  Widget _transactionItemBuilder(
+    int index,
+    TransactionItem item,
+    bool isDaily,
+  ) {
+    String description = (item.transaction.description == null ||
+            item.transaction.description.trim().isEmpty)
+        ? 'No Description'
+        : item.transaction.description;
+    double amount = item.transaction.amount;
+    if (item.transaction.category.transactionType == TransactionType.EXPENSE) {
+      amount *= -1;
+    }
+    return ListTile(
+      onTap: () => isDaily
+          ? Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TransactionRoute(
+                  transaction: item.transaction,
+                ),
+              ),
+            )
+          : null,
+      onLongPress: () => isDaily
+          ? _showOptionsModalBottomSheet(context, item.transaction)
+          : null,
+      leading: ColorCircle(color: item.transaction.category.color),
+      title: Text(
+        item.transaction.category.name,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      ),
+      subtitle: isDaily
+          ? Text(
+              description,
               overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-            subtitle: isDaily
-                ? Text(
-                    description,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  )
-                : null,
-            trailing: Text(
-              standardNumberFormat(amount),
-              style: Theme.of(context).textTheme.caption,
-            ),
-          );
-        }
-      },
-      itemCount: items.length,
+              maxLines: 2,
+            )
+          : null,
+      trailing: Text(
+        standardNumberFormat(amount),
+        style: Theme.of(context).textTheme.caption,
+      ),
+    );
+  }
+
+  Widget _listItemBuilder(List<ListItem> items) {
+    return Scrollbar(
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          if (items[index] is HeadingItem) {
+            return _headingItemBuilder(index, items[index] as HeadingItem);
+          } else {
+            return _transactionItemBuilder(
+              index,
+              items[index] as TransactionItem,
+              transactionFilterType == TransactionFilterType.DAILY,
+            );
+          }
+        },
+        itemCount: items.length,
+      ),
     );
   }
 
@@ -357,7 +371,7 @@ class _ReportState extends State<Report> {
               BuildContext context2,
               List<ListItem> listItems,
             ) {
-              return _buildTransactionWidgets(listItems);
+              return _listItemBuilder(listItems);
             },
             emptyListItemBuilderFn: (BuildContext context3) {
               return buildListInitialGuideWidget('transaction');
