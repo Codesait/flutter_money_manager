@@ -46,7 +46,11 @@ class _CategoryRouteState extends State<CategoryRoute> {
       _category.name = _nameController.text;
 
       try {
-        await CategoryTable().insert(_category);
+        if (_category.id == null || _category.id <= 0) {
+          await CategoryTable().insert(_category);
+        } else {
+          await CategoryTable().update(_category);
+        }
         Navigator.pop(context);
       } catch (exception) {
         print('_saveCategory() : Fail to save category! $exception');

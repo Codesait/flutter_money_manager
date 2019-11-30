@@ -45,4 +45,19 @@ class CategoryTable {
 
     return db.delete(tableName, where: id + '=?', whereArgs: [categoryId]);
   }
+
+  Future<int> update(Category category) async {
+    // Get a reference to the database.
+    final Database db = await DatabaseHelper().db;
+
+    // Update the correct category.
+    return db.update(
+      tableName,
+      category.toMap(),
+      // Ensure that the category has a matching id.
+      where: "$id=?",
+      // Pass the category's id as a whereArg to prevent SQL injection.
+      whereArgs: [category.id],
+    );
+  }
 }
