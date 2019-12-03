@@ -1,4 +1,5 @@
 import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
+import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:sqflite/sqflite.dart';
@@ -109,5 +110,24 @@ class TransactionTable {
     return List.generate(maps.length, (i) {
       return MyTransaction.fromMap(maps[i]);
     });
+  }
+
+  Future<double> getTotalBalance() async {
+    // Get a reference to the database.
+    final Database db = await DatabaseHelper().db;
+    final String aliasColumn = 'total_balance';
+
+    final rawQuery = 'SELECT SUM(CASE ${CategoryTable().type}'
+        ' WHEN ${TransactionType.EXPENSE.value}'
+        ' THEN -$amount'
+        ' ELSE $amount END)'
+        ' AS $aliasColumn'
+        ' FROM $tableName'
+        ' LEFT JOIN ${CategoryTable().tableName}'
+        ' ON $category=${CategoryTable().id}';
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
+
+    return maps[0][aliasColumn];
   }
 }
