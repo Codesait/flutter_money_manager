@@ -83,6 +83,10 @@ class TransactionTable {
 
     String filter;
     switch (transactionFilterType) {
+      case TransactionFilterType.ALL:
+        {
+          break;
+        }
       case TransactionFilterType.DAILY:
         {
           filter = '%Y-%m-%d %H:%M:%S.%s';
@@ -111,9 +115,12 @@ class TransactionTable {
         ' FROM $tableName'
         ' LEFT JOIN ${CategoryTable().tableName}'
         ' ON $category=${CategoryTable().id}'
-        ' GROUP BY STRFTIME(\'$filter\', $date),'
-        ' $category'
-        ' ORDER BY STRFTIME(\'$filter\', $date) DESC';
+        ' GROUP BY $category';
+
+    if (filter != null) {
+      rawQuery += ', STRFTIME(\'$filter\', $date)'
+          ' ORDER BY STRFTIME(\'$filter\', $date) DESC';
+    }
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
 

@@ -49,6 +49,8 @@ class _FutureListItemBuilderState extends State<FutureListItemBuilder> {
     DateTime date,
   ) {
     switch (transactionFilterType) {
+      case TransactionFilterType.ALL:
+        return '';
       case TransactionFilterType.DAILY:
         return shortDateFormat(getDateWithoutTime(date));
       case TransactionFilterType.MONTHLY:
@@ -82,18 +84,22 @@ class _FutureListItemBuilderState extends State<FutureListItemBuilder> {
       if (key == getDateFormattedString(transactionFilterType, t.date)) {
         tempList.add(TransactionItem(transaction: t));
 
-        if (t.category.transactionType == TransactionType.INCOME) {
-          balance += t.amount;
-        } else {
-          balance -= t.amount;
+        if (transactionFilterType != TransactionFilterType.ALL) {
+          if (t.category.transactionType == TransactionType.INCOME) {
+            balance += t.amount;
+          } else {
+            balance -= t.amount;
+          }
         }
       }
     }
 
-    list.add(HeadingItem(
-      heading: key,
-      balance: balance,
-    ));
+    if (transactionFilterType != TransactionFilterType.ALL) {
+      list.add(HeadingItem(
+        heading: key,
+        balance: balance,
+      ));
+    }
 
     list.addAll(tempList);
 
