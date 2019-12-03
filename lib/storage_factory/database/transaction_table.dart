@@ -1,5 +1,4 @@
 import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
-import 'package:flutter_money_manager/models/total.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:sqflite/sqflite.dart';
@@ -37,24 +36,6 @@ class TransactionTable {
       transaction.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-  }
-
-  Future<List<Total>> getTotals() async {
-    // Get a reference to the database.
-    final Database db = await DatabaseHelper().db;
-
-    // Query the table for total amount that group up with category.
-    String rawQuery = 'SELECT ${CategoryTable().type}, SUM($amount) $amount'
-        ' FROM $tableName'
-        ' INNER JOIN ${CategoryTable().tableName}'
-        ' ON $category=${CategoryTable().id}'
-        ' GROUP BY ${CategoryTable().type}';
-    final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
-
-    // Convert the List<Map<String, dynamic> into a List<Total>.
-    return List.generate(maps.length, (index) {
-      return Total.fromMap(maps[index]);
-    });
   }
 
   Future<int> delete(int transactionId) async {
