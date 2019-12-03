@@ -1,172 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
 import 'package:flutter_money_manager/enums/transaction_type.dart';
+import 'package:flutter_money_manager/models/list_item.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/routes/transaction_route.dart';
 import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
-import 'package:flutter_money_manager/utils/date_format_util.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/utils/widget_util.dart';
 import 'package:flutter_money_manager/widgets/custom_tabbar.dart';
+import 'package:flutter_money_manager/widgets/future_list_item_builder.dart';
 
 import 'color_circle.dart';
-
-List<ListItem> _convertListOfMyTransactionToListItem(
-  List<MyTransaction> transactions,
-  List<ListItem> list,
-  TransactionFilterType transactionFilterType,
-) {
-  if (transactions.length == 0) {
-    return list;
-  }
-
-  List<ListItem> tempList = [];
-
-  String key = getDateFormattedString(
-    transactionFilterType,
-    transactions[0].date,
-  );
-
-  double balance = 0;
-  for (MyTransaction t in transactions) {
-    if (key == getDateFormattedString(transactionFilterType, t.date)) {
-      tempList.add(TransactionItem(transaction: t));
-
-      if (t.category.transactionType == TransactionType.INCOME) {
-        balance += t.amount;
-      } else {
-        balance -= t.amount;
-      }
-    }
-  }
-
-  list.add(HeadingItem(
-    heading: key,
-    balance: balance,
-  ));
-
-  list.addAll(tempList);
-
-  // Remove transactions those are already added in tempList
-  transactions.removeWhere(
-      (t) => key == getDateFormattedString(transactionFilterType, t.date));
-
-  return _convertListOfMyTransactionToListItem(
-    transactions,
-    list,
-    transactionFilterType,
-  );
-}
-
-String getDateFormattedString(
-  TransactionFilterType transactionFilterType,
-  DateTime date,
-) {
-  switch (transactionFilterType) {
-    case TransactionFilterType.DAILY:
-      {
-        return shortDateFormat(getDateWithoutTime(date));
-      }
-    case TransactionFilterType.MONTHLY:
-      {
-        return shortDateFormatWithoutDay(getDateWithoutDayAndTime(date));
-      }
-    case TransactionFilterType.YEARLY:
-      {
-        return shortDateFormatWithoutMonthAndDay(
-            getDateWithoutMonthAndDayAndTime(date));
-      }
-    default:
-      {
-        throw UnsupportedError('$transactionFilterType is not supported!');
-      }
-  }
-}
-
-typedef LoadingBuilderFn = Widget Function(BuildContext context);
-typedef ListItemBuilderFn = Widget Function(
-  BuildContext context,
-  List<ListItem> listItems,
-);
-typedef EmptyListItemBuilderFn = Widget Function(BuildContext context);
-typedef ErrorBuilderFn = Widget Function(BuildContext context, String error);
-
-class FutureListItemBuilder extends StatefulWidget {
-  final TransactionFilterType transactionFilterType;
-  final LoadingBuilderFn loadingBuilderFn;
-  final ListItemBuilderFn listItemBuilderFn;
-  final EmptyListItemBuilderFn emptyListItemBuilderFn;
-  final ErrorBuilderFn errorBuilderFn;
-
-  const FutureListItemBuilder(
-      {Key key,
-      @required this.transactionFilterType,
-      @required this.loadingBuilderFn,
-      @required this.listItemBuilderFn,
-      @required this.emptyListItemBuilderFn,
-      @required this.errorBuilderFn})
-      : assert(transactionFilterType != null),
-        assert(loadingBuilderFn != null),
-        assert(listItemBuilderFn != null),
-        assert(emptyListItemBuilderFn != null),
-        assert(errorBuilderFn != null),
-        super(key: key);
-
-  @override
-  _FutureListItemBuilderState createState() => _FutureListItemBuilderState();
-}
-
-class _FutureListItemBuilderState extends State<FutureListItemBuilder> {
-  bool _loading = true;
-  String _error;
-  List<ListItem> _listItems;
-
-  void _getAndSetTransactions() {
-    TransactionTable()
-        .getAllByFilter(widget.transactionFilterType)
-        .then((List<MyTransaction> myTransactions) {
-      setState(() {
-        _loading = false;
-        _listItems = _convertListOfMyTransactionToListItem(
-          myTransactions,
-          List<ListItem>(),
-          widget.transactionFilterType,
-        );
-      });
-    }).catchError((error) {
-      setState(() {
-        _loading = false;
-        _listItems = null;
-        this._error = error;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    _getAndSetTransactions();
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(FutureListItemBuilder oldWidget) {
-    _getAndSetTransactions();
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_loading) {
-      return widget.loadingBuilderFn(context);
-    } else if (_listItems != null && _listItems.isEmpty) {
-      return widget.emptyListItemBuilderFn(context);
-    } else if (_listItems != null && _listItems.isNotEmpty) {
-      return widget.listItemBuilderFn(context, _listItems);
-    } else {
-      return widget.errorBuilderFn(context, _error);
-    }
-  }
-}
 
 class Report extends StatefulWidget {
   @override
@@ -386,28 +230,4 @@ class _ReportState extends State<Report> {
       ],
     );
   }
-}
-
-// The base class for the different types of items the list can contain.
-abstract class ListItem {}
-
-// A ListItem that contains data to display a heading.
-class HeadingItem implements ListItem {
-  final String heading;
-  final double balance;
-
-  HeadingItem({
-    @required this.heading,
-    @required this.balance,
-  })  : assert(heading != null),
-        assert(balance != null);
-}
-
-// A ListItem that contains data to display a message.
-class TransactionItem implements ListItem {
-  final MyTransaction transaction;
-
-  TransactionItem({
-    @required this.transaction,
-  }) : assert(transaction != null);
 }
