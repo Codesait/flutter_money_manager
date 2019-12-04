@@ -69,34 +69,51 @@ class Home extends StatelessWidget {
     );
   }
 
+  Widget _portraitBuilder(BuildContext context, Widget header, Widget list) {
+    return Column(children: [
+      header,
+      Expanded(child: list),
+    ]);
+  }
+
+  Widget _landscapeBuilder(BuildContext context, Widget header, Widget list) {
+    return Row(children: [
+      Expanded(child: header),
+      Expanded(child: list),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _futureTotalBalanceBuilder(),
-        Expanded(
-          child: FutureListItemBuilder(
-            transactionFilterType: TransactionFilterType.ALL,
-            loadingBuilderFn: (BuildContext context1) {
-              return CircularProgressIndicator();
-            },
-            listItemBuilderFn: (
-              BuildContext context2,
-              List<ListItem> listItems,
-            ) {
-              return _listItemBuilder(listItems);
-            },
-            emptyListItemBuilderFn: (BuildContext context3) {
-              return null;
-            },
-            errorBuilderFn: (BuildContext context4, String error) {
-              return Center(
-                child: Text(error),
-              );
-            },
-          ),
-        ),
-      ],
+    Widget header = _futureTotalBalanceBuilder();
+
+    Widget list = FutureListItemBuilder(
+      transactionFilterType: TransactionFilterType.ALL,
+      loadingBuilderFn: (BuildContext context1) {
+        return CircularProgressIndicator();
+      },
+      listItemBuilderFn: (
+        BuildContext context2,
+        List<ListItem> listItems,
+      ) {
+        return _listItemBuilder(listItems);
+      },
+      emptyListItemBuilderFn: (BuildContext context3) {
+        return null;
+      },
+      errorBuilderFn: (BuildContext context4, String error) {
+        return Center(
+          child: Text(error),
+        );
+      },
     );
+
+    return OrientationBuilder(builder: (context, orientation) {
+      if (orientation == Orientation.portrait) {
+        return _portraitBuilder(context, header, list);
+      } else {
+        return _landscapeBuilder(context, header, list);
+      }
+    });
   }
 }
