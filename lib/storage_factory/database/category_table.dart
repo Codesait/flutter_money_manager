@@ -6,6 +6,7 @@ import 'database_helper.dart';
 class CategoryTable {
   final tableName = 'category_table';
   final id = 'category_id';
+  final order = 'category_order';
   final color = 'category_color';
   final name = 'category_name';
   final type = 'transaction_type';
@@ -13,6 +14,7 @@ class CategoryTable {
   void onCreate(Database db, int version) {
     db.execute('CREATE TABLE $tableName('
         '$id INTEGER PRIMARY KEY AUTOINCREMENT,'
+        '$order INTEGER NOT NULL UNIQUE,'
         '$color INTEGER NOT NULL,'
         '$name TEXT NOT NULL UNIQUE,'
         '$type INTEGER NOT NULL)');
@@ -22,8 +24,14 @@ class CategoryTable {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
+    String sql = 'INSERT INTO $tableName($order, $color, $name, $type)'
+        ' VALUES((SELECT (IFNULL(MAX($order), 0)+1) $order FROM $tableName),'
+        ' ${category.color.value},'
+        ' "${category.name}",'
+        ' ${category.transactionType.value})';
+
     // Insert the Category into the correct table.
-    return db.insert(tableName, category.toMap());
+    return db.rawInsert(sql);
   }
 
   Future<List<Category>> getAll() async {

@@ -5,14 +5,16 @@ import 'package:flutter_money_manager/utils/color_util.dart';
 
 class Category {
   int id;
+  int order;
   Color color;
   String name;
   TransactionType transactionType;
 
-  Category({this.id, this.color, this.name, this.transactionType});
+  Category({this.id, this.order, this.color, this.name, this.transactionType});
 
   Category.fromMap(Map<String, dynamic> map) {
     id = map[CategoryTable().id];
+    order = map[CategoryTable().order];
     color = valueToColor(map[CategoryTable().color]);
     name = map[CategoryTable().name];
     transactionType = TransactionType.valueOf(map[CategoryTable().type]);
@@ -21,6 +23,7 @@ class Category {
   Map<String, dynamic> toMap() {
     return {
       CategoryTable().id: id,
+      CategoryTable().order: order,
       CategoryTable().color: color.value,
       CategoryTable().name: name,
       CategoryTable().type: transactionType.value,
@@ -31,6 +34,7 @@ class Category {
   String toString() {
     return 'Category{\n'
         'id : $id\n'
+        'order : $order\n'
         'color : ${color.value}\n'
         'name : $name\n'
         'transactionType : ${transactionType.name}\n'

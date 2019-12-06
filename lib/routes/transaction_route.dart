@@ -132,7 +132,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
   @override
   void initState() {
     if (_transaction == null) {
-      _transaction = MyTransaction(date: DateTime.now());
+      _transaction = MyTransaction(date: DateTime.now(), deleted: false);
     } else {
       _amountController.text = excludeZeroDecimal(_transaction.amount);
       _descriptionController.text = _transaction.description;

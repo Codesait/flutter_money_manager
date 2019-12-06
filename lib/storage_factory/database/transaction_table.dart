@@ -13,20 +13,19 @@ class TransactionTable {
   final amount = 'transaction_amount';
   final description = 'transaction_description';
   final category = 'transaction_category';
+  final deleted = 'transaction_deleted';
 
   void onCreate(Database db, int version) {
     db.execute('CREATE TABLE $tableName('
         '$id INTEGER PRIMARY KEY AUTOINCREMENT,'
-        '$date TEXT,'
-        '$amount REAL,'
+        '$date TEXT NOT NULL,'
+        '$amount REAL NOT NULL,'
         '$description TEXT,'
-        '$category INTEGER)');
+        '$category INTEGER NOT NULL,'
+        '$deleted INTEGER NOT NULL DEFAULT 0)');
   }
 
   Future<int> insert(MyTransaction transaction) async {
-    // Checking backend validation
-    transaction.checkValidationAndThrow();
-
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 

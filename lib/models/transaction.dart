@@ -9,6 +9,7 @@ class MyTransaction {
   double amount;
   String description;
   Category category;
+  bool deleted;
 
   MyTransaction({
     this.id,
@@ -16,6 +17,7 @@ class MyTransaction {
     this.amount,
     this.description,
     this.category,
+    this.deleted,
   });
 
   MyTransaction.fromMap(Map<String, dynamic> map) {
@@ -24,6 +26,7 @@ class MyTransaction {
     amount = map[TransactionTable().amount];
     description = map[TransactionTable().description];
     category = Category.fromMap(map);
+    deleted = map[TransactionTable().deleted] == 1;
   }
 
   Map<String, dynamic> toMap() {
@@ -33,21 +36,8 @@ class MyTransaction {
       TransactionTable().amount: amount,
       TransactionTable().description: description,
       TransactionTable().category: category.id,
+      TransactionTable().deleted: deleted ? 1 : 0,
     };
-  }
-
-  void checkValidationAndThrow() {
-    if (date == null) {
-      throw Exception("No date!");
-    }
-
-    if (amount <= 0) {
-      throw Exception("No amount!");
-    }
-
-    if (category == null) {
-      throw Exception("No category!");
-    }
   }
 
   @override

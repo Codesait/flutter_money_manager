@@ -99,7 +99,7 @@ class Home extends StatelessWidget {
         return _listItemBuilder(listItems);
       },
       emptyListItemBuilderFn: (BuildContext context3) {
-        return null;
+        return Container();
       },
       errorBuilderFn: (BuildContext context4, String error) {
         return Center(
