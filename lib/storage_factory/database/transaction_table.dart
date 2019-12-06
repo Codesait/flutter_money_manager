@@ -3,6 +3,7 @@ import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/storage_factory/database/category_table.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:meta/meta.dart';
 
 import 'database_helper.dart';
 
@@ -57,12 +58,14 @@ class TransactionTable {
     return map.length > 0;
   }
 
-  Future<List<MyTransaction>> getAllByFilter(
-      TransactionFilterType transactionFilterType) async {
+  Future<List<MyTransaction>> getAll({
+    @required TransactionFilterType transactionFilterType,
+    @required bool deleted,
+  }) async {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
-    String filter;
+    String transactionTypeFilter;
     switch (transactionFilterType) {
       case TransactionFilterType.ALL:
         {
@@ -70,20 +73,22 @@ class TransactionTable {
         }
       case TransactionFilterType.DAILY:
         {
-          filter = '%Y-%m-%d %H:%M:%S.%s';
+          transactionTypeFilter = '%Y-%m-%d %H:%M:%S.%s';
           break;
         }
       case TransactionFilterType.MONTHLY:
         {
-          filter = '%Y-%m';
+          transactionTypeFilter = '%Y-%m';
           break;
         }
       case TransactionFilterType.YEARLY:
         {
-          filter = '%Y';
+          transactionTypeFilter = '%Y';
           break;
         }
     }
+
+    int deletedFilter = deleted ? 1 : 0;
 
     String rawQuery = 'SELECT $id,'
         ' $date,'
@@ -96,11 +101,12 @@ class TransactionTable {
         ' FROM $tableName'
         ' LEFT JOIN ${CategoryTable().tableName}'
         ' ON $category=${CategoryTable().id}'
+        ' WHERE ${this.deleted}=$deletedFilter'
         ' GROUP BY $category';
 
-    if (filter != null) {
-      rawQuery += ', STRFTIME(\'$filter\', $date)'
-          ' ORDER BY STRFTIME(\'$filter\', $date) DESC';
+    if (transactionTypeFilter != null) {
+      rawQuery += ', STRFTIME(\'$transactionTypeFilter\', $date)'
+          ' ORDER BY STRFTIME(\'$transactionTypeFilter\', $date) DESC';
     }
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
@@ -123,7 +129,8 @@ class TransactionTable {
         ' AS $aliasColumn'
         ' FROM $tableName'
         ' LEFT JOIN ${CategoryTable().tableName}'
-        ' ON $category=${CategoryTable().id}';
+        ' ON $category=${CategoryTable().id}'
+        ' WHERE ${this.deleted}=0';
 
     final List<Map<String, dynamic>> maps = await db.rawQuery(rawQuery);
 

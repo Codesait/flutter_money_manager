@@ -16,6 +16,7 @@ typedef ErrorBuilderFn = Widget Function(BuildContext context, String error);
 
 class FutureListItemBuilder extends StatefulWidget {
   final TransactionFilterType transactionFilterType;
+  final bool deleted;
   final LoadingBuilderFn loadingBuilderFn;
   final ListItemBuilderFn listItemBuilderFn;
   final EmptyListItemBuilderFn emptyListItemBuilderFn;
@@ -27,8 +28,10 @@ class FutureListItemBuilder extends StatefulWidget {
       @required this.loadingBuilderFn,
       @required this.listItemBuilderFn,
       @required this.emptyListItemBuilderFn,
-      @required this.errorBuilderFn})
+      @required this.errorBuilderFn,
+      this.deleted = false})
       : assert(transactionFilterType != null),
+        assert(deleted != null),
         assert(loadingBuilderFn != null),
         assert(listItemBuilderFn != null),
         assert(emptyListItemBuilderFn != null),
@@ -116,7 +119,10 @@ class _FutureListItemBuilderState extends State<FutureListItemBuilder> {
 
   void _getAndSetTransactions() {
     TransactionTable()
-        .getAllByFilter(widget.transactionFilterType)
+        .getAll(
+      transactionFilterType: widget.transactionFilterType,
+      deleted: widget.deleted,
+    )
         .then((List<MyTransaction> myTransactions) {
       setState(() {
         _loading = false;
