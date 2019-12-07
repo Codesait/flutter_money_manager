@@ -61,12 +61,12 @@ class MyApp extends StatelessWidget {
                 },
               ),
               ListTile(
-                selected: nav.currentNav == NavigationItem.SETTINGS,
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
+                selected: nav.currentNav == NavigationItem.TRASH,
+                leading: Icon(Icons.restore_from_trash),
+                title: Text('Trash'),
                 onTap: () {
                   Navigator.of(context).pop();
-                  nav.changeNavigation(NavigationItem.SETTINGS);
+                  nav.changeNavigation(NavigationItem.TRASH);
                 },
               ),
             ],

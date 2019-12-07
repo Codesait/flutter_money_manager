@@ -4,7 +4,7 @@ import 'package:flutter_money_manager/fabs/fabs.dart';
 import 'package:flutter_money_manager/routes/category_route.dart';
 import 'package:flutter_money_manager/widgets/categories.dart';
 import 'package:flutter_money_manager/widgets/home.dart';
-import 'package:flutter_money_manager/widgets/settings.dart';
+import 'package:flutter_money_manager/widgets/trash.dart';
 import 'package:flutter_money_manager/widgets/transactions.dart';
 
 class NavigationProvider with ChangeNotifier {
@@ -23,8 +23,8 @@ class NavigationProvider with ChangeNotifier {
                     builder: (context) => CategoryRoute(category: category)));
           },
         );
-      case NavigationItem.SETTINGS:
-        return Settings();
+      case NavigationItem.TRASH:
+        return Trash();
       default:
         return Home();
     }
@@ -36,8 +36,8 @@ class NavigationProvider with ChangeNotifier {
         return Text('Transactions');
       case NavigationItem.CATEGORIES:
         return Text('Categories');
-      case NavigationItem.SETTINGS:
-        return Text('Settings');
+      case NavigationItem.TRASH:
+        return Text('Trash');
       default:
         // Do not show title in Home.
         return Text('');
@@ -59,4 +59,4 @@ class NavigationProvider with ChangeNotifier {
   }
 }
 
-enum NavigationItem { HOME, TRANSACTIONS, CATEGORIES, SETTINGS }
+enum NavigationItem { HOME, TRANSACTIONS, CATEGORIES, TRASH }
