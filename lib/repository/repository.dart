@@ -4,4 +4,7 @@ class Repository {
   final TransactionTable _transactionTable = TransactionTable();
 
   Future<double> getTotalBalance() => _transactionTable.getTotalBalance();
+
+  Future<int> markTransactionAsDeleted(int id) =>
+      _transactionTable.markTransactionAsDeleted(id);
 }

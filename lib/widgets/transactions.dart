@@ -3,8 +3,8 @@ import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
 import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/list_item.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
+import 'package:flutter_money_manager/repository/repository.dart';
 import 'package:flutter_money_manager/routes/transaction_route.dart';
-import 'package:flutter_money_manager/storage_factory/database/transaction_table.dart';
 import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/utils/widget_util.dart';
 import 'package:flutter_money_manager/widgets/custom_tabbar.dart';
@@ -21,11 +21,14 @@ class _ReportState extends State<Report> {
   TransactionFilterType transactionFilterType = TransactionFilterType.DAILY;
 
   Future<void> deleteTransaction(
-      BuildContext context, MyTransaction transaction) async {
-    int result = await TransactionTable().delete(transaction.id);
+    BuildContext context,
+    MyTransaction transaction,
+  ) async {
+    int result = await Repository().markTransactionAsDeleted(transaction.id);
     if (result <= 0) {
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Fail to delete.')));
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text('Fail to delete.')));
 
       return false;
     }
@@ -33,7 +36,8 @@ class _ReportState extends State<Report> {
     setState(() {});
 
     Scaffold.of(context)
-        .showSnackBar(SnackBar(content: Text('Deleted successfully.')));
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('Deleted successfully.')));
   }
 
   void _showOptionsModalBottomSheet(
