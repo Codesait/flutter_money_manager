@@ -5,6 +5,16 @@ class Repository {
 
   Future<double> getTotalBalance() => _transactionTable.getTotalBalance();
 
-  Future<int> markTransactionAsDeleted(int id) =>
-      _transactionTable.markTransactionAsDeleted(id);
+  Future<int> moveToTrash(int id) =>
+      _transactionTable.updateColumn(
+        id: id,
+        column: _transactionTable.deleted,
+        value: 1,
+      );
+
+  Future<int> restoreTransaction(int id) => _transactionTable.updateColumn(
+        id: id,
+        column: _transactionTable.deleted,
+        value: 0,
+      );
 }

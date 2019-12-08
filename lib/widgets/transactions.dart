@@ -24,7 +24,7 @@ class _ReportState extends State<Report> {
     BuildContext context,
     MyTransaction transaction,
   ) async {
-    int result = await Repository().markTransactionAsDeleted(transaction.id);
+    int result = await Repository().moveToTrash(transaction.id);
     if (result <= 0) {
       Scaffold.of(context)
         ..removeCurrentSnackBar()

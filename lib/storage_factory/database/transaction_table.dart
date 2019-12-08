@@ -137,13 +137,17 @@ class TransactionTable {
     return maps[0][aliasColumn];
   }
 
-  Future<int> markTransactionAsDeleted(int id) async {
+  Future<int> updateColumn({
+    @required int id,
+    @required String column,
+    @required dynamic value,
+  }) async {
     // Get a reference to the database.
     final Database db = await DatabaseHelper().db;
 
     // Row to update
     Map<String, dynamic> values = {
-      deleted: 1,
+      column: value,
     };
 
     // Update the correct transaction.
@@ -151,7 +155,7 @@ class TransactionTable {
       tableName,
       values,
       // Ensure that the transaction has a matching id.
-      where: '$id=?',
+      where: '${this.id}=?',
       // Pass the transaction's id as a whereArg to prevent SQL injection.
       whereArgs: [id],
     );
