@@ -4,10 +4,10 @@ import 'package:flutter_money_manager/models/list_item.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/repository/repository.dart';
 import 'package:flutter_money_manager/routes/transaction_route.dart';
-import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/utils/widget_util.dart';
 import 'package:flutter_money_manager/widgets/custom_tabbar.dart';
 import 'package:flutter_money_manager/widgets/future_list_item_builder.dart';
+import 'package:flutter_money_manager/widgets/heading_item_tile.dart';
 import 'package:flutter_money_manager/widgets/transaction_item_tile.dart';
 
 class Report extends StatefulWidget {
@@ -69,34 +69,6 @@ class _ReportState extends State<Report> {
         });
   }
 
-  Widget _headingItemBuilder(int index, HeadingItem item) {
-    return Column(
-      children: <Widget>[
-        index == 0 ? SizedBox(height: 4.0) : Divider(),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 16.0,
-            top: 8.0,
-            right: 16.0,
-            bottom: 8.0,
-          ),
-          child: Row(
-            children: <Widget>[
-              Expanded(child: Text(item.heading)),
-              Text(
-                standardNumberFormat(item.balance),
-                style: TextStyle(
-                  color: item.balance < 0 ? Colors.red : Colors.green,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Divider(),
-      ],
-    );
-  }
-
   void _onTap(BuildContext context, MyTransaction transaction) {
     Navigator.push(
       context,
@@ -127,7 +99,11 @@ class _ReportState extends State<Report> {
       child: ListView.builder(
         itemBuilder: (context, index) {
           if (items[index] is HeadingItem) {
-            return _headingItemBuilder(index, items[index] as HeadingItem);
+            return HeadingItemTile(
+              index: index,
+              item: items[index] as HeadingItem,
+              showTotal: true,
+            );
           } else {
             return _transactionItemBuilder(
               context: context,
