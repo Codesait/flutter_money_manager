@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_money_manager/enums/transaction_filter_type.dart';
-import 'package:flutter_money_manager/enums/transaction_type.dart';
 import 'package:flutter_money_manager/models/list_item.dart';
 import 'package:flutter_money_manager/models/transaction.dart';
 import 'package:flutter_money_manager/repository/repository.dart';
@@ -9,8 +8,7 @@ import 'package:flutter_money_manager/utils/number_format_util.dart';
 import 'package:flutter_money_manager/utils/widget_util.dart';
 import 'package:flutter_money_manager/widgets/custom_tabbar.dart';
 import 'package:flutter_money_manager/widgets/future_list_item_builder.dart';
-
-import 'color_circle.dart';
+import 'package:flutter_money_manager/widgets/transaction_item_tile.dart';
 
 class Report extends StatefulWidget {
   @override
@@ -99,50 +97,28 @@ class _ReportState extends State<Report> {
     );
   }
 
-  Widget _transactionItemBuilder(
-    int index,
+  void _onTap(BuildContext context, MyTransaction transaction) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TransactionRoute(
+          transaction: transaction,
+        ),
+      ),
+    );
+  }
+
+  Widget _transactionItemBuilder({
+    BuildContext context,
     TransactionItem item,
     bool isDaily,
-  ) {
-    String description = (item.transaction.description == null ||
-            item.transaction.description.trim().isEmpty)
-        ? 'No Description'
-        : item.transaction.description;
-    double amount = item.transaction.amount;
-    if (item.transaction.category.transactionType == TransactionType.EXPENSE) {
-      amount *= -1;
-    }
-    return ListTile(
-      onTap: () => isDaily
-          ? Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TransactionRoute(
-                  transaction: item.transaction,
-                ),
-              ),
-            )
-          : null,
+  }) {
+    return TransactionItemTile(
+      onTap: () => isDaily ? _onTap(context, item.transaction) : null,
       onLongPress: () => isDaily
           ? _showOptionsModalBottomSheet(context, item.transaction)
           : null,
-      leading: ColorCircle(color: item.transaction.category.color),
-      title: Text(
-        item.transaction.category.name,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-      ),
-      subtitle: isDaily
-          ? Text(
-              description,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            )
-          : null,
-      trailing: Text(
-        standardNumberFormat(amount),
-        style: Theme.of(context).textTheme.caption,
-      ),
+      item: item,
     );
   }
 
@@ -154,9 +130,9 @@ class _ReportState extends State<Report> {
             return _headingItemBuilder(index, items[index] as HeadingItem);
           } else {
             return _transactionItemBuilder(
-              index,
-              items[index] as TransactionItem,
-              transactionFilterType == TransactionFilterType.DAILY,
+              context: context,
+              item: items[index] as TransactionItem,
+              isDaily: transactionFilterType == TransactionFilterType.DAILY,
             );
           }
         },

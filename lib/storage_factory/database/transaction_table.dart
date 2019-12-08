@@ -90,10 +90,15 @@ class TransactionTable {
 
     int deletedFilter = deleted ? 1 : 0;
 
-    String rawQuery = 'SELECT $id,'
-        ' $date,'
+    String rawQuery = 'SELECT';
+
+    if (transactionFilterType == TransactionFilterType.DAILY) {
+      rawQuery += ' $id,'
+          ' $description,';
+    }
+
+    rawQuery += ' $date,'
         ' SUM($amount) $amount,'
-        ' $description,'
         ' ${CategoryTable().id},'
         ' ${CategoryTable().color},'
         ' ${CategoryTable().name},'
